@@ -1,3 +1,28 @@
-.PHONY: server-dev
-server-dev:
-	go run backend/main.go
+.PHONY: backend-dev
+backend-dev:
+	watchexec -w backend/src -e go -n go run backend/src/main.go
+
+.PHONY: backend-build
+backend-build:
+	mkdir -p backend/out
+	go build -o backend/out/main backend/src/main.go
+
+.PHONY: backend-prod
+backend-prod:
+	backend/out/main
+
+.PHONY: frontend-dev
+frontend-dev:
+	npx webpack -w
+
+.PHONY: frontend-build
+frontend-build:
+	npx webpack
+
+.PHONY: image-build
+image-build:
+	docker build . -t transmission
+
+.PHONY: image-run
+image-run:
+	docker run -it --rm -p 127.0.0.1:3455:3455 transmission

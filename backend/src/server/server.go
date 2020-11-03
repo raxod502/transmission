@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/raxod502/transmission/backend/api"
+	"github.com/raxod502/transmission/backend/src/api"
 )
 
 func serveHtml(name string) http.Handler {
