@@ -8,10 +8,15 @@ import (
 )
 
 func main() {
-	addr := os.Getenv("ADDR")
-	if addr == "" {
-		addr = "localhost:3455"
+	host := os.Getenv("HOST")
+	if host == "" {
+		host = "localhost"
 	}
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3455"
+	}
+	addr := host + ":" + port
 	fmt.Fprintln(os.Stderr, "transmission: listening on http://"+addr)
 	if err := server.Start(addr); err != nil {
 		fmt.Fprintf(os.Stderr, "transmission: fatal error: %s\n", err.Error())

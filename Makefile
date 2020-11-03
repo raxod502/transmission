@@ -26,3 +26,8 @@ image-build:
 .PHONY: image-run
 image-run:
 	docker run -it --rm -p 127.0.0.1:3455:3455 transmission
+
+.PHONY: deploy
+deploy:
+	heroku container:push web
+	heroku container:release web

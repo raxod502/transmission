@@ -20,8 +20,7 @@ RUN make frontend-build
 
 FROM alpine
 
-EXPOSE 3455
-ENV ADDR="0.0.0.0:3455"
+ENV HOST="0.0.0.0"
 WORKDIR /app
 RUN apk add --no-cache make
 COPY Makefile ./
