@@ -10,6 +10,11 @@ Social deduction game based on pairwise interaction.
 * [Watchexec](https://github.com/watchexec/watchexec)
 * [Yarn](https://yarnpkg.com/)
 
+### For production and deployment
+
+* [Docker](https://www.docker.com/)
+* [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+
 ## Development
 
 Open two terminals.
@@ -17,7 +22,7 @@ Open two terminals.
     $ make backend-dev
     $ make frontend-dev
 
-Game is running at <http://localhost:3455/>.
+Game is running at <http://localhost:3455>.
 
 ## Production and deployment
 
