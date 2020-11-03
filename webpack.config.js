@@ -7,7 +7,7 @@ function isProduction(argv) {
 module.exports = (_, argv) => ({
   devtool: isProduction(argv) ? undefined : "source-map",
   entry: {
-    index: "./frontend/js/src/index.ts",
+    index: "./frontend/js/src/index.tsx",
   },
   mode: isProduction(argv) ? "production" : "development",
   module: {
@@ -22,5 +22,8 @@ module.exports = (_, argv) => ({
     path: path.resolve(__dirname, "frontend/js/out/"),
     publicPath: "/js/",
     filename: "[name].js",
+  },
+  resolve: {
+    extensions: [".js", ".ts", ".tsx"],
   },
 });
