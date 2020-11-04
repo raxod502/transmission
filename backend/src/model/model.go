@@ -7,17 +7,18 @@ import (
 )
 
 type Role string
-const(
-	HQ Role = "HQ"
-	TD Role = "TD"
+
+const (
+	HQ  Role = "HQ"
+	TD  Role = "TD"
 	BAD Role = "Baddie"
-	TE Role = "Train Expert"
-	FC Role = "Fact Checker"
+	TE  Role = "Train Expert"
+	FC  Role = "Fact Checker"
 )
 
 type PlayerID int
 type Fact struct {
-	Value string
+	Value          string
 	PossibleValues []string
 }
 type Facts map[string]Fact
@@ -25,41 +26,41 @@ type Facts map[string]Fact
 type Thread []Message
 
 type Message struct {
-	Sender *Player
-	Text string
+	Sender    *Player
+	Text      string
 	Timestamp time.Time
 }
 
 type Player struct {
-	Name string
-	Role Role
-	ID PlayerID
-	Color int // TODO: figure out best way to encode this
+	Name    string
+	Role    Role
+	ID      PlayerID
+	Color   int // TODO: figure out best way to encode this
 	Threads []*Thread
 }
 
 type Game struct {
 	Players []*Player
 	Threads map[PlayerID]map[PlayerID]*Thread
-	Graph map[PlayerID][]PlayerID
+	Graph   map[PlayerID][]PlayerID
 }
 
 type RoleConfig struct {
-	GoodRoles []Role
-	BadRoles []Role
+	GoodRoles  []Role
+	BadRoles   []Role
 	NumBaddies int
 }
 
-func shuffleRoleSlice(slice []Role){
+func shuffleRoleSlice(slice []Role) {
 	rand.Shuffle(
 		len(slice),
-		func(i int , j int ){
+		func(i int, j int) {
 			slice[j], slice[i] = slice[i], slice[j]
 		},
 	)
 }
 
-func (rc *RoleConfig) randomizeRoles(numPlayers int) []Role{
+func (rc *RoleConfig) randomizeRoles(numPlayers int) []Role {
 	// Copy both lists of roles
 	goods := make([]Role, len(rc.GoodRoles))
 	copy(goods, rc.GoodRoles)
@@ -73,11 +74,10 @@ func (rc *RoleConfig) randomizeRoles(numPlayers int) []Role{
 	// Take numPlayers - rc.NumBaddies good roles
 	chosenGoodRoles := goods[:(numPlayers - rc.NumBaddies)]
 	// stick em together and shuffle them one more time
-	chosenRoles:= append(chosenBadRoles, chosenGoodRoles...)
+	chosenRoles := append(chosenBadRoles, chosenGoodRoles...)
 	shuffleRoleSlice(chosenRoles)
 	return chosenRoles
 }
-
 
 // Takes in a graph in adjacency list form
 func MakeGame(graph map[int][]int, roles RoleConfig) Game {
@@ -89,17 +89,17 @@ func MakeGame(graph map[int][]int, roles RoleConfig) Game {
 
 	// Create a player for each node in the graph
 	currentPlayerID := PlayerID(0)
-	for node:= range graph {
-		player :=&Player{ID: currentPlayerID, Name: fmt.Sprintf("Player %v", currentPlayerID)}
+	for node := range graph {
+		player := &Player{ID: currentPlayerID, Name: fmt.Sprintf("Player %v", currentPlayerID)}
 		currentPlayerID++
 
-		nodeToPlayer[node]=player
+		nodeToPlayer[node] = player
 		g.Players = append(g.Players, player)
 	}
 
 	// Handle edges
 	for nodeA, neighbors := range graph {
-		for _, nodeB:= range neighbors {
+		for _, nodeB := range neighbors {
 			if nodeA > nodeB {
 				// create a thread once for each edge in the graph
 				thread := &Thread{}
@@ -114,7 +114,7 @@ func MakeGame(graph map[int][]int, roles RoleConfig) Game {
 				if !ok {
 					// initialize map if it doesn't already exist
 					g.Threads[playerA.ID] = map[PlayerID]*Thread{}
-					secondPlayerMap= g.Threads[playerA.ID]
+					secondPlayerMap = g.Threads[playerA.ID]
 				}
 				secondPlayerMap[playerB.ID] = thread
 
