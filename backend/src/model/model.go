@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// State object definitions:
 type PlayerID string
 type NodeID string
 type GroupID string
@@ -81,7 +82,7 @@ type Message struct {
 }
 
 type Fact struct {
-	Value          string
+	Value    string
 	Possible []string
 }
 
@@ -90,6 +91,7 @@ type Facts struct {
 	Submitted map[string]Fact
 }
 
+// State update structs and functions
 type EventName struct {
 	Event string
 }
@@ -97,35 +99,6 @@ type EventName struct {
 type UpdatePlayer struct {
 	EventName
 	Player Player
-}
-
-type RemovePlayer struct {
-	EventName
-	PlayerID PlayerID
-}
-
-type CheckFact struct {
-	EventName
-	PlayerID PlayerID
-	Field    string
-	Value    string
-}
-
-type StartGame struct {
-	EventName
-	StopTime time.Time
-}
-
-type SubmitFacts struct {
-	EventName
-	Submission map[string]Fact
-}
-
-type SendMessage struct {
-	EventName
-	GroupID GroupID
-	Sender  NodeID
-	Text    string
 }
 
 func (s State) UpdatePlayer(newPlayer Player) error {
@@ -137,6 +110,11 @@ func (s State) UpdatePlayer(newPlayer Player) error {
 	return nil
 }
 
+type RemovePlayer struct {
+	EventName
+	PlayerID PlayerID
+}
+
 func (s State) RemovePlayer(id PlayerID) error {
 	delete(s.Players, id)
 	return nil
@@ -145,6 +123,13 @@ func (s State) RemovePlayer(id PlayerID) error {
 // TODO: Not sure what this should do
 func (s State) StopGame() error {
 	return nil
+}
+
+type CheckFact struct {
+	EventName
+	PlayerID PlayerID
+	Field    string
+	Value    string
 }
 
 func (s State) CheckFact(check *CheckFact) error {
@@ -165,14 +150,31 @@ func (s State) StartPregame() {
 	// TODO Do we need or want this to do other state cleanup?
 }
 
+type StartGame struct {
+	EventName
+	StopTime time.Time
+}
+
 func (s State) StartGame(stopTime time.Time) {
 	s.Game.state = PLAYING
 	s.Game.startTime = time.Now()
 	s.Game.stopTime = stopTime
 }
 
+type SubmitFacts struct {
+	EventName
+	Submission map[string]Fact
+}
+
 func (s State) SubmitFacts(submission map[string]Fact) {
 	s.Facts.Submitted = submission
+}
+
+type SendMessage struct {
+	EventName
+	GroupID GroupID
+	Sender  NodeID
+	Text    string
 }
 
 func (s State) SendMessage(newMsg *SendMessage) error {
