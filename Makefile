@@ -13,11 +13,11 @@ backend-prod:
 
 .PHONY: frontend-dev
 frontend-dev:
-	npx webpack -w
+	npx rollup -c -w
 
 .PHONY: frontend-build
 frontend-build:
-	npx webpack
+	npx rollup -c
 
 .PHONY: image-build
 image-build:
