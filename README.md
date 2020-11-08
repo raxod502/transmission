@@ -90,45 +90,78 @@ state, some fields may be absent):
   "players": {
     "player-323de6a9-64a0-4974-84f0-2d686f9e5da9": {
       "name": "Radon",
+      "id": "player-323de6a9-64a0-4974-84f0-2d686f9e5da9"
       "color": "#E27D60",
       "node": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
       "role": "headquarters",
       "admin": false
+      "checks": [
+        {
+          "name": "color",
+          "guessedValue": "green"
+          "correct": false
+        },
+      ],
     },
     "player-6b8c5cef-7888-4338-9b3e-5cb814b62408": {
       "name": "Owen",
+      "id": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408"
       "color": "#85DCB",
       "node": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
       "role": "trainDepot",
       "admin": false
+      "checks": []
     },
     "player-2b7d07e2-e692-4092-a888-f63ddcc574ca": {
       "name": "Amit",
+      "id": "player-2b7d07e2-e692-4092-a888-f63ddcc574ca"
       "color": "#E8A87C",
       "node": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
       "role": "doubleAgent",
       "admin": false
+      "checks": []
     },
     "player-26c36d93-7afc-482a-885a-ba15f3daae6d": {
       "name": "Louise",
+      "id": "player-26c36d93-7afc-482a-885a-ba15f3daae6d"
       "color": "#41B3A3",
       "node": null,
       "role": null,
       "admin": true
+      "checks": []
     }
   },
   "graph": {
     "nodes": {
-      "node-08424445-0d7c-4c09-8d64-49a113bf0149": [
-        "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
-        "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
-      ],
-      "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307": [
-        "group-f91095f6-d8e8-42f3-b239-79d988437c1b"
-      ],
-      "node-59ce6684-6597-44de-9be2-fb167b4891d4": [
-        "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
-      ]
+      "node-08424445-0d7c-4c09-8d64-49a113bf0149": {
+        "id": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
+        "player": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408",
+        "name": "Owen",
+        "color": "#85DCB",
+        "groups" : [
+          "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
+          "group-e511762b-9fb9-4921-ae9f-b19b7a49a673",
+        ],
+      }
+      "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307": {
+        "id": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
+        "player": "player-2b7d07e2-e692-4092-a888-f63ddcc574ca",
+        "name": "Amit",
+        "color": "#E8A87C",
+        "groups":[
+            "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
+          ],
+      }
+      ,
+      "node-59ce6684-6597-44de-9be2-fb167b4891d4": {
+        "id": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
+        "player": "player-26c36d93-7afc-482a-885a-ba15f3daae6d",
+        "name": "Louise",
+        "color": "#41B3A3",
+        "groups": [
+            "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
+          ],
+      }
     },
     "groups": {
       "group-f91095f6-d8e8-42f3-b239-79d988437c1b": {
@@ -157,23 +190,20 @@ state, some fields may be absent):
     }
   },
   "facts": {
-    "possible": {
-      "compartment": ["00", "17", "42"],
-      "color": ["red", "violet", "red violet", "violet red"],
-      "food": ["apple pie", "pecan pie", "pumpkin pie"]
-    },
-    "true": {
-      "compartment": "42",
-      "color": "violet red",
-      "food": "pecan pie"
-    },
-    "checked": [
-      {
-        "field": "color",
-        "value": "red violet",
-        "accurate": false
+    "real": {
+      "compartment": {
+        "possible": ["00", "17", "42"],
+        "value": "42",
+      },
+      "color": {
+        "possible": ["red", "violet", "red violet", "violet red"],
+        "value": "violet red",
+      },
+      "food": {
+        "possible": ["apple pie", "pecan pie", "pumpkin pie"],
+        "value": "pecan pie",
       }
-    ]
+    }
   }
 }
 ```
