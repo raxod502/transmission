@@ -1,6 +1,6 @@
 .PHONY: backend-dev
 backend-dev:
-	watchexec -w backend/src -e go -n go run backend/src/main.go
+	watchexec -w backend/src -e go -r -n go run backend/src/main.go
 
 .PHONY: backend-build
 backend-build:

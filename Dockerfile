@@ -25,7 +25,6 @@ WORKDIR /app
 RUN apk add --no-cache make
 COPY Makefile ./
 COPY --from=backend /src/backend/out/main ./backend/out/
-COPY --from=frontend /src/frontend/html ./frontend/html
-COPY --from=frontend /src/frontend/css ./frontend/css
-COPY --from=frontend /src/frontend/js/out ./frontend/js/out
+COPY --from=frontend /src/frontend/static ./frontend/static
+COPY --from=frontend /src/frontend/out ./frontend/out
 CMD ["make", "backend-prod"]
