@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "jsx": "react",
-    "sourceMap": true,
-    "strict": true,
-    "target": "ES3"
-  }
-}

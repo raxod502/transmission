@@ -14,7 +14,7 @@ WORKDIR /src
 RUN apk add --no-cache make
 COPY package.json yarn.lock ./
 RUN yarn install
-COPY Makefile tsconfig.json webpack.config.js ./
+COPY Makefile rollup.config.js ./
 COPY frontend ./frontend
 RUN make frontend-build
 
