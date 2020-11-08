@@ -83,7 +83,7 @@ state, some fields may be absent):
 ```json
 {
   "game": {
-    "state": "configuration | pregame | playing | submission | results",
+    "state": "lobby | playing | submission | results",
     "startTime": "2020-11-07T15:29:24Z",
     "stopTime": "2020-11-07T15:39:24Z | null"
   },
