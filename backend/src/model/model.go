@@ -88,7 +88,7 @@ type Fact struct {
 
 type Facts struct {
 	Real      map[string]Fact
-	Submitted map[string]Fact
+	Submitted map[string]string
 }
 
 // State update structs and functions
@@ -101,13 +101,9 @@ type UpdatePlayer struct {
 	Player Player
 }
 
-func (s State) UpdatePlayer(newPlayer Player) error {
-	oldPlayer, ok := s.Players[newPlayer.ID]
-	if !ok {
-		return fmt.Errorf("no existing players with PlayerID %v", newPlayer.ID)
-	}
+func (s State) UpdatePlayer(newPlayer Player) {
+	oldPlayer := s.Players[newPlayer.ID]
 	*oldPlayer = newPlayer
-	return nil
 }
 
 type RemovePlayer struct {
@@ -135,7 +131,7 @@ type CheckFact struct {
 func (s State) CheckFact(check *CheckFact) error {
 	guessingPlayer, ok := s.Players[check.PlayerID]
 	if !ok {
-		return fmt.Errorf("no existing players with PlayerID %v", guessingPlayer.ID)
+		return fmt.Errorf("no existing players with PlayerID %v", check.PlayerID)
 	}
 	fact, ok := s.Facts.Real[check.Field]
 	if !ok {
@@ -163,10 +159,10 @@ func (s State) StartGame(stopTime time.Time) {
 
 type SubmitFacts struct {
 	EventName
-	Submission map[string]Fact
+	Submission map[string]string
 }
 
-func (s State) SubmitFacts(submission map[string]Fact) {
+func (s State) SubmitFacts(submission map[string]string) {
 	s.Facts.Submitted = submission
 }
 

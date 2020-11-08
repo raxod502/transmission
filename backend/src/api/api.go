@@ -18,18 +18,28 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/launch", launchMissiles)
 }
 
-func handleEvent(payload []byte, state model.State) error {
+func HandleEvent(payload []byte, state model.State) error {
 	event := &model.EventName{}
-	json.Unmarshal(payload, event)
+	err := json.Unmarshal(payload, event)
+	if err != nil {
+		return err
+	}
 	eventHandlers := map[string]func([]byte) error{
 		"updatePlayer": func(payload []byte) error {
 			message := &model.UpdatePlayer{}
-			json.Unmarshal(payload, message)
-			return state.UpdatePlayer(message.Player)
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			state.UpdatePlayer(message.Player)
+			return nil
 		},
 		"removePlayer": func(payload []byte) error {
 			message := &model.RemovePlayer{}
-			json.Unmarshal(payload, message)
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
 			state.RemovePlayer(message.PlayerID)
 			return nil
 		},
@@ -38,28 +48,40 @@ func handleEvent(payload []byte, state model.State) error {
 		},
 		"checkFact": func(payload []byte) error {
 			message := &model.CheckFact{}
-			json.Unmarshal(payload, message)
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
 			return state.CheckFact(message)
 		},
-		"startPreGame": func(payload []byte) error {
+		"startPregame": func(payload []byte) error {
 			state.StartPregame()
 			return nil
 		},
 		"startGame": func(payload []byte) error {
 			message := &model.StartGame{}
-			json.Unmarshal(payload, message)
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
 			state.StartGame(message.StopTime)
 			return nil
 		},
 		"submitFacts": func(payload []byte) error {
 			message := &model.SubmitFacts{}
-			json.Unmarshal(payload, message)
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
 			state.SubmitFacts(message.Submission)
 			return nil
 		},
 		"sendMessage": func(payload []byte) error {
 			message := &model.SendMessage{}
-			json.Unmarshal(payload, message)
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
 			state.SendMessage(message)
 			return nil
 		},
@@ -68,6 +90,6 @@ func handleEvent(payload []byte, state model.State) error {
 	if !ok {
 		return fmt.Errorf("event type %v does not have a handler", event.Event)
 	}
-	err := handler(payload)
+	err = handler(payload)
 	return err
 }

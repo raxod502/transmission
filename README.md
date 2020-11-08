@@ -93,41 +93,41 @@ state, some fields may be absent):
       "id": "player-323de6a9-64a0-4974-84f0-2d686f9e5da9"
       "color": "#E27D60",
       "node": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
-      "role": "headquarters",
+      "role": "HQ",
       "admin": false
       "checks": [
         {
           "name": "color",
           "guessedValue": "green"
           "correct": false
-        },
-      ],
+        }
+      ]
     },
     "player-6b8c5cef-7888-4338-9b3e-5cb814b62408": {
       "name": "Owen",
-      "id": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408"
+      "id": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408",
       "color": "#85DCB",
       "node": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
-      "role": "trainDepot",
-      "admin": false
+      "role": "TD",
+      "admin": false,
       "checks": []
     },
     "player-2b7d07e2-e692-4092-a888-f63ddcc574ca": {
       "name": "Amit",
-      "id": "player-2b7d07e2-e692-4092-a888-f63ddcc574ca"
+      "id": "player-2b7d07e2-e692-4092-a888-f63ddcc574ca",
       "color": "#E8A87C",
       "node": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
-      "role": "doubleAgent",
-      "admin": false
+      "role": "baddie",
+      "admin": false,
       "checks": []
     },
     "player-26c36d93-7afc-482a-885a-ba15f3daae6d": {
       "name": "Louise",
-      "id": "player-26c36d93-7afc-482a-885a-ba15f3daae6d"
+      "id": "player-26c36d93-7afc-482a-885a-ba15f3daae6d",
       "color": "#41B3A3",
       "node": null,
       "role": null,
-      "admin": true
+      "admin": true,
       "checks": []
     }
   },
@@ -140,19 +140,18 @@ state, some fields may be absent):
         "color": "#85DCB",
         "groups" : [
           "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
-          "group-e511762b-9fb9-4921-ae9f-b19b7a49a673",
-        ],
-      }
+          "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
+        ]
+      },
       "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307": {
         "id": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
         "player": "player-2b7d07e2-e692-4092-a888-f63ddcc574ca",
         "name": "Amit",
         "color": "#E8A87C",
         "groups":[
-            "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
-          ],
-      }
-      ,
+            "group-f91095f6-d8e8-42f3-b239-79d988437c1b"
+          ]
+      },
       "node-59ce6684-6597-44de-9be2-fb167b4891d4": {
         "id": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
         "player": "player-26c36d93-7afc-482a-885a-ba15f3daae6d",
@@ -160,7 +159,7 @@ state, some fields may be absent):
         "color": "#41B3A3",
         "groups": [
             "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
-          ],
+          ]
       }
     },
     "groups": {
@@ -193,15 +192,15 @@ state, some fields may be absent):
     "real": {
       "compartment": {
         "possible": ["00", "17", "42"],
-        "value": "42",
+        "value": "42"
       },
       "color": {
         "possible": ["red", "violet", "red violet", "violet red"],
-        "value": "violet red",
+        "value": "violet red"
       },
       "food": {
         "possible": ["apple pie", "pecan pie", "pumpkin pie"],
-        "value": "pecan pie",
+        "value": "pecan pie"
       }
     }
   }
@@ -213,11 +212,15 @@ The client can send messages to update the state.
 ```json
 {
   "event": "updatePlayer",
-  "playerID": "2b7d07e2-e692-4092-a888-f63ddcc574ca",
-  "playerName": "Amit",
-  "playerColor": "#E8A87C",
-  "playerNode": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
-  "playerAdmin": false
+  "player": {
+    "name": "Amit",
+    "node": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
+    "id": "2b7d07e2-e692-4092-a888-f63ddcc574ca",
+    "role": "HQ",
+    "color": "#E8A87C",
+    "admin": false,
+    "checks": []
+  }
 }
 
 {
@@ -231,7 +234,7 @@ The client can send messages to update the state.
 
 {
   "event": "startGame",
-  "stopTime": "2020-11-07T15:39:24Z | null"
+  "stopTime": "2020-11-07T15:39:24Z"
 }
 
 {
@@ -240,13 +243,14 @@ The client can send messages to update the state.
 
 {
   "event": "checkFact",
+  "playerID": "6b8c5cef-7888-4338-9b3e-5cb814b62408",
   "field": "color",
   "value": "red violet"
 }
 
 {
   "event": "submitFacts",
-  "facts": {
+  "submission": {
     "compartment": "42",
     "color": "violet red",
     "food": "apple pie"
