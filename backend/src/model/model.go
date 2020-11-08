@@ -1,133 +1,126 @@
 package model
 
 import (
+	"errors"
 	"fmt"
-	"math/rand"
+	"strconv"
 	"time"
 )
 
+type PlayerID string
+type NodeID string
+type GroupID string
+
 type Role string
-const(
-	HQ Role = "HQ"
-	TD Role = "TD"
+
+const (
+	HQ  Role = "HQ"
+	TD  Role = "TD"
 	BAD Role = "Baddie"
-	TE Role = "Train Expert"
-	FC Role = "Fact Checker"
+	TE  Role = "Train Expert"
+	FC  Role = "Fact Checker"
 )
 
-type PlayerID int
-type Fact struct {
-	Value string
-	PossibleValues []string
-}
-type Facts map[string]Fact
+type Gamestate string
 
-type Thread []Message
+const (
+	LOBBY      Gamestate = "Lobby"
+	PLAYING    Gamestate = "Playing"
+	SUBMISSION Gamestate = "Submission"
+	RESULTS    Gamestate = "Results"
+)
 
-type Message struct {
-	Sender *Player
-	Text string
-	Timestamp time.Time
-}
-
-type Player struct {
-	Name string
-	Role Role
-	ID PlayerID
-	Color int // TODO: figure out best way to encode this
-	Threads []*Thread
+type State struct {
+	Game    Game
+	Players map[PlayerID]*Player
+	Graph   Graph
+	Facts   Facts
 }
 
 type Game struct {
-	Players []*Player
-	Threads map[PlayerID]map[PlayerID]*Thread
-	Graph map[PlayerID][]PlayerID
+	state     Gamestate
+	startTime time.Time
+	stopTime  time.Time
 }
 
-type RoleConfig struct {
-	GoodRoles []Role
-	BadRoles []Role
-	NumBaddies int
+type Player struct {
+	Name  string
+	Node  NodeID
+	Role  Role
+	Color string // TODO: figure out best way to encode this
+	admin bool
 }
 
-func shuffleRoleSlice(slice []Role){
-	rand.Shuffle(
-		len(slice),
-		func(i int , j int ){
-			slice[j], slice[i] = slice[i], slice[j]
-		},
-	)
+type Graph struct {
+	nodes  map[NodeID][]GroupID
+	groups map[GroupID]Group
 }
 
-func (rc *RoleConfig) randomizeRoles(numPlayers int) []Role{
-	// Copy both lists of roles
-	goods := make([]Role, len(rc.GoodRoles))
-	copy(goods, rc.GoodRoles)
-	bads := make([]Role, len(rc.BadRoles))
-	copy(bads, rc.BadRoles)
-	// Shuffle both lists
-	shuffleRoleSlice(goods)
-	shuffleRoleSlice(bads)
-	// Take rc.NumBaddies bad roles
-	chosenBadRoles := bads[:rc.NumBaddies]
-	// Take numPlayers - rc.NumBaddies good roles
-	chosenGoodRoles := goods[:(numPlayers - rc.NumBaddies)]
-	// stick em together and shuffle them one more time
-	chosenRoles:= append(chosenBadRoles, chosenGoodRoles...)
-	shuffleRoleSlice(chosenRoles)
-	return chosenRoles
+type Group struct {
+	Messages []Message
 }
 
+type Message struct {
+	Sender    NodeID
+	Text      string
+	Timestamp time.Time
+}
 
-// Takes in a graph in adjacency list form
-func MakeGame(graph map[int][]int, roles RoleConfig) Game {
-	rand.Seed(time.Now().UTC().UnixNano())
-	var g Game
-	g.Threads = map[PlayerID]map[PlayerID]*Thread{}
-	g.Graph = map[PlayerID][]PlayerID{}
-	nodeToPlayer := map[int]*Player{}
+type Fact struct {
+	Value          string
+	PossibleValues []string
+	Checked        map[string]bool
+}
 
-	// Create a player for each node in the graph
-	currentPlayerID := PlayerID(0)
-	for node:= range graph {
-		player :=&Player{ID: currentPlayerID, Name: fmt.Sprintf("Player %v", currentPlayerID)}
-		currentPlayerID++
+type Facts map[string]Fact
 
-		nodeToPlayer[node]=player
-		g.Players = append(g.Players, player)
+func validateEventName(data map[string]string, expectedName string) error {
+	eventName, ok := data["event"]
+	if !ok || eventName != expectedName {
+		return fmt.Errorf(
+			"called method on payload without an appropriate event field. Expected %v, but got %v",
+			expectedName,
+			eventName,
+		)
+	}
+	return nil
+}
+
+func (s State) updatePlayer(data map[string]string) error {
+	err := validateEventName(data, "updatePlayer")
+	if err != nil {
+		return err
 	}
 
-	// Handle edges
-	for nodeA, neighbors := range graph {
-		for _, nodeB:= range neighbors {
-			if nodeA > nodeB {
-				// create a thread once for each edge in the graph
-				thread := &Thread{}
-				// Add thread to both players
-				playerA := nodeToPlayer[nodeA]
-				playerA.Threads = append(playerA.Threads, thread)
-				playerB := nodeToPlayer[nodeB]
-				playerB.Threads = append(playerB.Threads, thread)
-
-				// Add thread to the game's thread mapping
-				secondPlayerMap, ok := g.Threads[playerA.ID]
-				if !ok {
-					// initialize map if it doesn't already exist
-					g.Threads[playerA.ID] = map[PlayerID]*Thread{}
-					secondPlayerMap= g.Threads[playerA.ID]
-				}
-				secondPlayerMap[playerB.ID] = thread
-
-				// Add the edge using the correct player IDs to game.Graph
-				g.Graph[playerA.ID] = append(g.Graph[playerA.ID], playerB.ID)
-			}
-		}
+	playerID, ok := data["playerID"]
+	if !ok {
+		return errors.New("missing playerID field")
 	}
-	// Assign roles
-	randomRoles := roles.randomizeRoles(len(graph))
-	// Player N gets role N (since role ordering is already random)
-	for i, player := range g.Players {
-		player.Role = randomRoles[i]
+
+	admin, err := strconv.ParseBool(data["playerAdmin"])
+	if err != nil {
+		return fmt.Errorf("Failed to parse playerAdmin value into bool with error %v", err)
 	}
-	return g
+	s.Players[PlayerID(playerID)] = &Player{
+		Name:  data["playerName"],
+		Node:  NodeID(data["playerNode"]),
+		Role:  Role(data["playerRole"]),
+		Color: data["playerColor"],
+		admin: admin,
+	}
+	return nil
+}
+
+func (s State) removePlayer(data map[string]string) error {
+	err := validateEventName(data, "removePlayer")
+	if err != nil {
+		return err
+	}
+
+	playerID, ok := data["playerID"]
+	if !ok {
+		return errors.New("missing playerID field")
+	}
+	delete(s.Players, PlayerID(playerID))
+	return nil
 }
