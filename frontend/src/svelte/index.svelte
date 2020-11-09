@@ -53,10 +53,10 @@
 </script>
 
 <main>
-  <div class="columns">
-    <div class="column">
-      <div class="rows">
-        <div class="row">
+  <div class="columns is-gapless">
+    <div class="column is-three-quarters">
+      <div class="rows" style="height: 100vh">
+        <div class="row" style="height: 20%">
           <div class="columns">
             <div class="column">
               Name and role
@@ -66,7 +66,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" style="height: 80%">
           <div class="columns">
             {#each state.groups as { recipients, messages }}
               <div class="column">
@@ -76,7 +76,7 @@
                   </div>
                   <div class="row">
                     {#each messages as { sender, text }}
-                      {sender}: {text}
+                      <p>{sender}: {text}</p>
                     {/each}
                   </div>
                 </div>
@@ -87,24 +87,29 @@
       </div>
     </div>
     <div class="column">
-      <div class="rows">
-        <div class="row">
+      <div class="rows" style="height: 100vh">
+        <div class="row" style="height: 25%">
           Network
         </div>
-        <div class="row">
+        <div class="row" style="height: 25%">
           <p>Facts</p>
           {#each Object.entries(state.facts.real) as [id, { name, possible, value }]}
-            <label for="fact-dropdown-{id}">{name}</label>
-            <select name="fact-dropdown-{id}" value={value}>
-              {#each possible as value}
-                <option value="{value}">{value}</option>
-              {/each}
-            </select>
+            <p>
+              <label for="fact-dropdown-{id}">{name}</label>
+              <select name="fact-dropdown-{id}" value={value}>
+                {#each possible as value}
+                  <option value="{value}">{value}</option>
+                {/each}
+              </select>
+            </p>
           {/each}
         </div>
-        <div class="row">
-          <p>Facts</p>
+        <div class="row" style="height: 25%">
+          <p>Notes</p>
           <textarea></textarea>
+        </div>
+        <div class="row" style="height: 25%">
+          <p>Power</p>
         </div>
       </div>
     </div>
