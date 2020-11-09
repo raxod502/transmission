@@ -95,7 +95,6 @@ func (c *Client) readPump(manager *ClientManager) {
 			}
 			break
 		}
-		fmt.Printf("got message: %v\n", message)
 		manager.incoming <- message
 	}
 }
@@ -105,19 +104,17 @@ func (c *Client) readPump(manager *ClientManager) {
 func (c *Client) writePump(manager *ClientManager) {
 	defer c.conn.Close()
 	for {
-		select {
-		case message, ok := <-c.outgoing:
-			if !ok {
-				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
-				return
-			}
-			w, err := c.conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				fmt.Printf("websocket nextwriter err: %v\n", err)
-				return
-			}
-			w.Write(message)
+		message, ok := <-c.outgoing
+		if !ok {
+			c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+			return
 		}
+		w, err := c.conn.NextWriter(websocket.TextMessage)
+		if err != nil {
+			fmt.Printf("websocket nextwriter err: %v\n", err)
+			return
+		}
+		w.Write(message)
 	}
 }
 
