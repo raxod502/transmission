@@ -100,7 +100,6 @@ state, some fields may be absent):
       "color": "#E27D60",
       "node": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
       "role": "HQ",
-      "admin": false
       "checks": [
         {
           "name": "color",
@@ -115,7 +114,6 @@ state, some fields may be absent):
       "color": "#85DCB",
       "node": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
       "role": "TD",
-      "admin": false,
       "checks": []
     },
     "player-2b7d07e2-e692-4092-a888-f63ddcc574ca": {
@@ -124,16 +122,6 @@ state, some fields may be absent):
       "color": "#E8A87C",
       "node": "node-59ce6684-6597-44de-9be2-fb167b4891d4",
       "role": "baddie",
-      "admin": false,
-      "checks": []
-    },
-    "player-26c36d93-7afc-482a-885a-ba15f3daae6d": {
-      "name": "Louise",
-      "id": "player-26c36d93-7afc-482a-885a-ba15f3daae6d",
-      "color": "#41B3A3",
-      "node": null,
-      "role": null,
-      "admin": true,
       "checks": []
     }
   },
