@@ -101,7 +101,7 @@ type UpdatePlayer struct {
 	Player Player
 }
 
-func (s State) UpdatePlayer(newPlayer Player) {
+func (s *State) UpdatePlayer(newPlayer Player) {
 	oldPlayer := s.Players[newPlayer.ID]
 	*oldPlayer = newPlayer
 }
@@ -111,13 +111,13 @@ type RemovePlayer struct {
 	PlayerID PlayerID
 }
 
-func (s State) RemovePlayer(id PlayerID) error {
+func (s *State) RemovePlayer(id PlayerID) error {
 	delete(s.Players, id)
 	return nil
 }
 
 // TODO: Not sure what this should do
-func (s State) StopGame() error {
+func (s *State) StopGame() error {
 	return nil
 }
 
@@ -128,7 +128,7 @@ type CheckFact struct {
 	Value    string
 }
 
-func (s State) CheckFact(check *CheckFact) error {
+func (s *State) CheckFact(check *CheckFact) error {
 	guessingPlayer, ok := s.Players[check.PlayerID]
 	if !ok {
 		return fmt.Errorf("no existing players with PlayerID %v", check.PlayerID)
@@ -141,7 +141,7 @@ func (s State) CheckFact(check *CheckFact) error {
 	return nil
 }
 
-func (s State) StartPregame() {
+func (s *State) StartPregame() {
 	s.Game.state = LOBBY
 	// TODO Do we need or want this to do other state cleanup?
 }
@@ -151,7 +151,7 @@ type StartGame struct {
 	StopTime time.Time
 }
 
-func (s State) StartGame(stopTime time.Time) {
+func (s *State) StartGame(stopTime time.Time) {
 	s.Game.state = PLAYING
 	s.Game.startTime = time.Now()
 	s.Game.stopTime = stopTime
@@ -162,7 +162,7 @@ type SubmitFacts struct {
 	Submission map[string]string
 }
 
-func (s State) SubmitFacts(submission map[string]string) {
+func (s *State) SubmitFacts(submission map[string]string) {
 	s.Facts.Submitted = submission
 }
 
@@ -173,7 +173,7 @@ type SendMessage struct {
 	Text    string
 }
 
-func (s State) SendMessage(newMsg *SendMessage) error {
+func (s *State) SendMessage(newMsg *SendMessage) error {
 	group, ok := s.Graph.groups[newMsg.GroupID]
 	if !ok {
 		return fmt.Errorf("group with id %v does not exist", newMsg.GroupID)

@@ -18,7 +18,8 @@ func Setup(r *mux.Router) {
 	r.HandleFunc("/launch", launchMissiles)
 }
 
-func HandleEvent(payload []byte, state model.State) error {
+
+func HandleEvent(payload []byte, state *model.State) error {
 	event := &model.EventName{}
 	err := json.Unmarshal(payload, event)
 	if err != nil {
@@ -91,5 +92,9 @@ func HandleEvent(payload []byte, state model.State) error {
 		return fmt.Errorf("event type %v does not have a handler", event.Event)
 	}
 	err = handler(payload)
+	if err != nil {
+		return err
+	}
+
 	return err
 }
