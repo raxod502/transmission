@@ -10,6 +10,12 @@ Social deduction game based on pairwise interaction.
 * [Watchexec](https://github.com/watchexec/watchexec)
 * [Yarn](https://yarnpkg.com/)
 
+To install the frontend dependencies, run:
+
+```
+$ yarn install
+```
+
 ### For production and deployment
 
 * [Docker](https://www.docker.com/)
