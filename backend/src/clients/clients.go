@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/raxod502/transmission/backend/src/api"
 	"github.com/raxod502/transmission/backend/src/model"
@@ -32,6 +33,7 @@ type ClientManager struct {
 //NewClientManager inits an empty ClientManager
 func NewClientManager() *ClientManager {
 	return &ClientManager{
+		state:      &model.State{},
 		clients:    map[*Client]bool{},
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
@@ -85,6 +87,7 @@ func (c *Client) readPump(manager *ClientManager) {
 	}()
 	// TODO: Check if we want to change any of the default config values
 	for {
+		fmt.Println("Waiting for message")
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -92,6 +95,8 @@ func (c *Client) readPump(manager *ClientManager) {
 			}
 			break
 		}
+		fmt.Printf("got message: %v\n", message)
+		manager.incoming <- message
 	}
 }
 
@@ -116,17 +121,32 @@ func (c *Client) writePump(manager *ClientManager) {
 	}
 }
 
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
 
-//addClient upgrades a connection to a websocket and then initializes it
+//AddClient upgrades a connection to a websocket and then initializes it
 func addClient(w http.ResponseWriter, r *http.Request, manager *ClientManager) {
+	fmt.Println("connection attempted")
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Printf("error upgrading conn: %v\n", err)
 		return
 	}
 	client := &Client{conn: conn, outgoing: make(chan []byte)}
+	fmt.Println("made client")
 	manager.register <- client
+	fmt.Println("registered client")
 	go client.readPump(manager)
+	fmt.Println("reading client")
 	go client.writePump(manager)
+	fmt.Println("writing client")
+}
+
+func Setup(r *mux.Router) {
+	clientManager := NewClientManager()
+	go clientManager.Run()
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		addClient(w, r, clientManager)
+	})
 }

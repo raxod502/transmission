@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/raxod502/transmission/backend/src/api"
+	"github.com/raxod502/transmission/backend/src/clients"
 )
 
 func serveHtml(name string) http.Handler {
@@ -20,7 +20,7 @@ func Start(addr string) error {
 
 	r.Handle("/", serveHtml("index"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", static))
-	api.Setup(r.PathPrefix("/api/v1/").Subrouter())
+	clients.Setup(r.PathPrefix("/api/v1/").Subrouter())
 
 	http.Handle("/", r)
 

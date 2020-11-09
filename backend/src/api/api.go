@@ -3,21 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/raxod502/transmission/backend/src/model"
 )
-
-func launchMissiles(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Missiles launched\n"))
-}
-
-func Setup(r *mux.Router) {
-	r.HandleFunc("/launch", launchMissiles)
-}
-
 
 func HandleEvent(payload []byte, state *model.State) error {
 	event := &model.EventName{}
