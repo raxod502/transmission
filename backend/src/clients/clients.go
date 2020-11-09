@@ -20,15 +20,16 @@ type ClientManager struct {
 	state *model.State
 	// Registered clients.
 	clients map[*Client]bool
-
 	// Register requests from the clients.
 	register chan *Client
-
 	// Unregister requests from clients.
 	unregister chan *Client
-	incoming   chan []byte
+	// All incoming API requests go through this channel to avoid having to lock
+	// access to the state object
+	incoming chan []byte
 }
 
+//NewClientManager inits an empty ClientManager
 func NewClientManager() *ClientManager {
 	return &ClientManager{
 		clients:    map[*Client]bool{},
@@ -38,6 +39,7 @@ func NewClientManager() *ClientManager {
 	}
 }
 
+//UpdateClientsState sends the latest version of the state object to every client
 func (c *ClientManager) UpdateClientsState(state *model.State) error {
 	payload, err := json.Marshal(state)
 	if err != nil {
@@ -49,6 +51,7 @@ func (c *ClientManager) UpdateClientsState(state *model.State) error {
 	return nil
 }
 
+//Run handles register and unregister events as well as incoming API requests
 func (c *ClientManager) Run() {
 	for {
 		select {
@@ -74,6 +77,7 @@ func (c *ClientManager) Run() {
 	}
 }
 
+// readPump processes incoming messages for each websocket until it errors
 func (c *Client) readPump(manager *ClientManager) {
 	defer func() {
 		manager.unregister <- c
@@ -88,10 +92,11 @@ func (c *Client) readPump(manager *ClientManager) {
 			}
 			break
 		}
-		manager.incoming <- message
 	}
 }
 
+// writePump processes each client's outgoing channel and sends these messages
+// over the websocket
 func (c *Client) writePump(manager *ClientManager) {
 	defer c.conn.Close()
 	for {
@@ -113,13 +118,14 @@ func (c *Client) writePump(manager *ClientManager) {
 
 var upgrader = websocket.Upgrader{}
 
+//addClient upgrades a connection to a websocket and then initializes it
 func addClient(w http.ResponseWriter, r *http.Request, manager *ClientManager) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Printf("error upgrading conn: %v\n", err)
 		return
 	}
-	client := &Client{conn: conn, incoming: make(chan []byte), outgoing: make(chan []byte)}
+	client := &Client{conn: conn, outgoing: make(chan []byte)}
 	manager.register <- client
 	go client.readPump(manager)
 	go client.writePump(manager)
