@@ -1,7 +1,19 @@
 <script>
   import "./index/global.svelte";
 
+  function getGameTimes() {
+    const startTime = new Date();
+    startTime.setSeconds(startTime.getSeconds() - 60);
+    const endTime = new Date(startTime.getTime());
+    endTime.setSeconds(endTime.getSeconds() + 60 * 10);
+    return { startTime, endTime };
+  }
+
   let state = {
+    game: {
+      state: "playing",
+      ...getGameTimes(),
+    },
     groups: [
       {
         recipients: [
