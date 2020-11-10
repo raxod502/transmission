@@ -32,12 +32,12 @@ const (
 func NewState() *State {
 	return &State{
 		Game: Game{
-			state: LOBBY,
+			State: LOBBY,
 		},
 		Players: map[PlayerID]*Player{},
 		Graph: Graph{
-			nodes:  map[NodeID]Node{},
-			groups: map[GroupID]Group{},
+			Nodes:  map[NodeID]Node{},
+			Groups: map[GroupID]Group{},
 		},
 		Facts: Facts{
 			Real:      map[string]Fact{},
@@ -53,9 +53,9 @@ type State struct {
 }
 
 type Game struct {
-	state     Gamestate
-	startTime time.Time
-	stopTime  time.Time
+	State     Gamestate
+	StartTime *time.Time
+	StopTime  *time.Time
 }
 
 type Player struct {
@@ -69,14 +69,14 @@ type Player struct {
 }
 
 type Check struct {
-	name         string
-	guessedValue string
-	correct      bool
+	Name         string
+	GuessedValue string
+	Correct      bool
 }
 
 type Graph struct {
-	nodes  map[NodeID]Node
-	groups map[GroupID]Group
+	Nodes  map[NodeID]Node
+	Groups map[GroupID]Group
 }
 
 type Node struct {
@@ -118,8 +118,7 @@ type UpdatePlayer struct {
 }
 
 func (s *State) UpdatePlayer(newPlayer Player) {
-	oldPlayer := s.Players[newPlayer.ID]
-	*oldPlayer = newPlayer
+	s.Players[newPlayer.ID] = &newPlayer
 }
 
 type RemovePlayer struct {
@@ -153,24 +152,25 @@ func (s *State) CheckFact(check *CheckFact) error {
 	if !ok {
 		return fmt.Errorf("no fact with name %v", check.Field)
 	}
-	guessingPlayer.checks = append(guessingPlayer.checks, Check{name: check.Field, guessedValue: check.Value, correct: check.Value == fact.Value})
+	guessingPlayer.checks = append(guessingPlayer.checks, Check{Name: check.Field, GuessedValue: check.Value, Correct: check.Value == fact.Value})
 	return nil
 }
 
 func (s *State) StartPregame() {
-	s.Game.state = LOBBY
+	s.Game.State = LOBBY
 	// TODO Do we need or want this to do other state cleanup?
 }
 
 type StartGame struct {
 	EventName
-	StopTime time.Time
+	StopTime *time.Time
 }
 
-func (s *State) StartGame(stopTime time.Time) {
-	s.Game.state = PLAYING
-	s.Game.startTime = time.Now()
-	s.Game.stopTime = stopTime
+func (s *State) StartGame(stopTime *time.Time) {
+	s.Game.State = PLAYING
+	currentTime := time.Now()
+	s.Game.StartTime = &currentTime
+	s.Game.StopTime = stopTime
 }
 
 type SubmitFacts struct {
@@ -190,7 +190,7 @@ type SendMessage struct {
 }
 
 func (s *State) SendMessage(newMsg *SendMessage) error {
-	group, ok := s.Graph.groups[newMsg.GroupID]
+	group, ok := s.Graph.Groups[newMsg.GroupID]
 	if !ok {
 		return fmt.Errorf("group with id %v does not exist", newMsg.GroupID)
 	}

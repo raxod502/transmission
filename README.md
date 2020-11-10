@@ -234,7 +234,7 @@ The client can send messages to update the state.
 
 {
   "event": "startGame",
-  "stopTime": "2020-11-07T15:39:24Z"
+  "stopTime": "2020-11-07T15:39:24Z" | null
 }
 
 {
