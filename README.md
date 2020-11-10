@@ -257,4 +257,18 @@ The client can send messages to update the state.
   "sender": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
   "text": "Hello Owen"
 }
+
+{
+"event": "updateNode",
+  "node": {
+        "id": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
+        "player": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408",
+        "name": "Owen",
+        "color": "#85DCB",
+        "groups" : [
+          "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
+          "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
+        ]
+      }
+}
 ```

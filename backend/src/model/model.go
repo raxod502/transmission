@@ -197,3 +197,12 @@ func (s *State) SendMessage(newMsg *SendMessage) error {
 	group.Messages = append(group.Messages, Message{Sender: newMsg.Sender, Timestamp: time.Now(), Text: newMsg.Text})
 	return nil
 }
+
+type UpdateNode struct {
+	EventName
+	Node Node
+}
+
+func (s *State) UpdateNode(newNode *UpdateNode) {
+	s.Graph.Nodes[newNode.Node.ID] = newNode.Node
+}

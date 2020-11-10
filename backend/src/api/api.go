@@ -74,6 +74,15 @@ func HandleEvent(payload []byte, state *model.State) error {
 			state.SendMessage(message)
 			return nil
 		},
+		"updateNode": func(payload []byte) error {
+			message := &model.UpdateNode{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			state.UpdateNode(message)
+			return nil
+		},
 	}
 	handler, ok := eventHandlers[event.Event]
 	if !ok {
