@@ -29,6 +29,22 @@ const (
 	RESULTS    Gamestate = "Results"
 )
 
+func NewState() *State {
+	return &State{
+		Game: Game{
+			state: LOBBY,
+		},
+		Players: map[PlayerID]*Player{},
+		Graph: Graph{
+			nodes:  map[NodeID]Node{},
+			groups: map[GroupID]Group{},
+		},
+		Facts: Facts{
+			Real:      map[string]Fact{},
+			Submitted: map[string]string{},
+		},
+	}
+}
 type State struct {
 	Game    Game
 	Players map[PlayerID]*Player

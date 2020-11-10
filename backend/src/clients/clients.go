@@ -33,7 +33,7 @@ type ClientManager struct {
 //NewClientManager inits an empty ClientManager
 func NewClientManager() *ClientManager {
 	return &ClientManager{
-		state:      &model.State{},
+		state:      model.NewState(),
 		clients:    map[*Client]bool{},
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
