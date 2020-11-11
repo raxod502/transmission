@@ -15,26 +15,26 @@ type GroupID string
 type Role string
 
 const (
-	HQ  Role = "HQ"
-	TD  Role = "TD"
-	BAD Role = "Baddie"
-	TE  Role = "Train Expert"
-	FC  Role = "Fact Checker"
+	HEADQUARTERS Role = "Headquarters"
+	TRAINDEPOT   Role = "Train Depot"
+	DOUBLEAGENT  Role = "Double Agent"
+	TRAINEXPERT  Role = "Train Expert"
+	FACTCHECKER  Role = "Fact Checker"
 )
 
 type Gamestate string
 
 const (
-	LOBBY      Gamestate = "Lobby"
-	PLAYING    Gamestate = "Playing"
-	SUBMISSION Gamestate = "Submission"
-	RESULTS    Gamestate = "Results"
+	LOBBY      Gamestate = "lobby"
+	PLAYING    Gamestate = "playing"
+	SUBMISSION Gamestate = "submission"
+	RESULTS    Gamestate = "results"
 )
 
 func NewState() *State {
 	return &State{
 		Game: Game{
-			State: LOBBY,
+			State: PLAYING, // change this later to LOBBY
 		},
 		Players: map[PlayerID]*Player{},
 		Graph: Graph{
@@ -49,76 +49,76 @@ func NewState() *State {
 }
 
 type State struct {
-	Game    Game
-	Players map[PlayerID]*Player
-	Graph   Graph
-	Facts   Facts
+	Game    Game                 `json:"game"`
+	Players map[PlayerID]*Player `json:"players"`
+	Graph   Graph                `json:"graph"`
+	Facts   Facts                `json:"facts"`
 }
 
 type Game struct {
-	State     Gamestate
-	StartTime *time.Time
-	StopTime  *time.Time
+	State     Gamestate  `json:"state"`
+	StartTime *time.Time `json:"startTime"`
+	StopTime  *time.Time `json:"stopTime"`
 }
 
 type Player struct {
-	Name   string
-	Node   NodeID
-	ID     PlayerID
-	Role   Role
-	Color  string // TODO: figure out best way to encode this
-	admin  bool
-	checks []Check
+	Name string   `json:"name"`
+	Node NodeID   `json:"node"`
+	ID   PlayerID `json:"id"`
+	Role Role     `json:"role"`
+	// TODO: figure out best way to encode colors
+	Color  string  `json:"color"`
+	checks []Check `json:"checks"`
 }
 
 type Check struct {
-	Name         string
-	GuessedValue string
-	Correct      bool
+	Name         string `json:"name"`
+	GuessedValue string `json:"guessedValue"`
+	Correct      bool   `json:"correct"`
 }
 
 type Graph struct {
-	Nodes  map[NodeID]*Node
-	Groups map[GroupID]*Group
+	Nodes  map[NodeID]*Node   `json:"nodes"`
+	Groups map[GroupID]*Group `json:"groups"`
 }
 
 type Node struct {
-	ID     NodeID
-	Player PlayerID
-	Name   string
-	Color  string
-	Groups []GroupID
+	ID     NodeID    `json:"id"`
+	Player PlayerID  `json:"player"`
+	Name   string    `json:"name"`
+	Color  string    `json:"color"`
+	Groups []GroupID `json:"groups"`
 }
 
 type Group struct {
-	ID       GroupID
-	Messages []Message
+	ID       GroupID   `json:"id"`
+	Messages []Message `json:"messages"`
 }
 
 type Message struct {
-	Sender    NodeID
-	Text      string
-	Timestamp time.Time
+	Sender    NodeID    `json:"sender"`
+	Text      string    `json:"text"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type Fact struct {
-	Value    string
-	Possible []string
+	Value    string   `json:"value"`
+	Possible []string `json:"possible"`
 }
 
 type Facts struct {
-	Real      map[string]*Fact
-	Submitted map[string]string
+	Real      map[string]*Fact  `json:"real"`
+	Submitted map[string]string `json:"submitted"`
 }
 
 // State update structs and functions
 type EventName struct {
-	Event string
+	Event string `json:"event"`
 }
 
 type UpdatePlayer struct {
 	EventName
-	Player Player
+	Player Player `json:"player"`
 }
 
 func (s *State) UpdatePlayer(newPlayer Player) {
@@ -127,7 +127,7 @@ func (s *State) UpdatePlayer(newPlayer Player) {
 
 type RemovePlayer struct {
 	EventName
-	PlayerID PlayerID
+	PlayerID PlayerID `json:"playerID"`
 }
 
 func (s *State) RemovePlayer(id PlayerID) error {
@@ -142,9 +142,9 @@ func (s *State) StopGame() error {
 
 type CheckFact struct {
 	EventName
-	PlayerID PlayerID
-	Field    string
-	Value    string
+	PlayerID PlayerID `json:"playerID"`
+	Field    string   `json:"field"`
+	Value    string   `json:"value"`
 }
 
 func (s *State) CheckFact(check *CheckFact) error {
@@ -167,7 +167,7 @@ func (s *State) StartPregame() {
 
 type StartGame struct {
 	EventName
-	StopTime *time.Time
+	StopTime *time.Time `json:"stopTime"`
 }
 
 func (s *State) StartGame(stopTime *time.Time) error {
@@ -190,7 +190,7 @@ func (s *State) StartGame(stopTime *time.Time) error {
 
 type SubmitFacts struct {
 	EventName
-	Submission map[string]string
+	Submission map[string]string `json:"submission"`
 }
 
 func (s *State) SubmitFacts(submission map[string]string) {
@@ -199,9 +199,9 @@ func (s *State) SubmitFacts(submission map[string]string) {
 
 type SendMessage struct {
 	EventName
-	GroupID GroupID
-	Sender  NodeID
-	Text    string
+	GroupID GroupID `json:"groupID"`
+	Sender  NodeID  `json:"sender"`
+	Text    string  `json:"text"`
 }
 
 func (s *State) SendMessage(newMsg *SendMessage) error {
@@ -215,7 +215,7 @@ func (s *State) SendMessage(newMsg *SendMessage) error {
 
 type UpdateNode struct {
 	EventName
-	Node Node
+	Node Node `json:"node"`
 }
 
 func (s *State) UpdateNode(newNode *UpdateNode) {
@@ -224,7 +224,7 @@ func (s *State) UpdateNode(newNode *UpdateNode) {
 
 type RemoveNode struct {
 	EventName
-	NodeID NodeID
+	NodeID NodeID `json:"nodeID"`
 }
 
 func (s *State) RemoveNode(nodeID NodeID) {
@@ -233,7 +233,7 @@ func (s *State) RemoveNode(nodeID NodeID) {
 
 type UpdateGroup struct {
 	EventName
-	Group Group
+	Group Group `json:"group"`
 }
 
 func (s *State) UpdateGroup(newGroup *UpdateGroup) {
@@ -242,7 +242,7 @@ func (s *State) UpdateGroup(newGroup *UpdateGroup) {
 
 type RemoveGroup struct {
 	EventName
-	GroupID GroupID
+	GroupID GroupID `json:"groupID"`
 }
 
 func (s *State) RemoveGroup(groupID GroupID) {
@@ -251,8 +251,8 @@ func (s *State) RemoveGroup(groupID GroupID) {
 
 type UpdateRealFactPossibilities struct {
 	EventName
-	FactName       string
-	PossibleValues []string
+	FactName       string   `json:"factName"`
+	PossibleValues []string `json:"possibleValues"`
 }
 
 func (s *State) UpdateRealFactPossibilities(newFact *UpdateRealFactPossibilities) {
