@@ -1,7 +1,9 @@
 package model
 
 import (
+	"errors"
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -168,11 +170,22 @@ type StartGame struct {
 	StopTime *time.Time
 }
 
-func (s *State) StartGame(stopTime *time.Time) {
+func (s *State) StartGame(stopTime *time.Time) error {
+	rand.Seed(time.Now().Unix())
 	s.Game.State = PLAYING
 	currentTime := time.Now()
 	s.Game.StartTime = &currentTime
 	s.Game.StopTime = stopTime
+	if len(s.Facts.Real) == 0 {
+		return errors.New("Cannot start a game with no real facts")
+	}
+	for name, fact := range s.Facts.Real {
+		if len(fact.Possible) == 0 {
+			return fmt.Errorf("fact %v has no possible values", name)
+		}
+		fact.Value = fact.Possible[rand.Intn(len(fact.Possible))]
+	}
+	return nil
 }
 
 type SubmitFacts struct {
