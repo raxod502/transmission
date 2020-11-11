@@ -41,6 +41,15 @@ func NewClientManager() *ClientManager {
 	}
 }
 
+func (c *Client) UpdateClientState(state *model.State) error {
+	payload, err := json.Marshal(state)
+	if err != nil {
+		return err
+	}
+	c.outgoing <- payload
+	return nil
+}
+
 //UpdateClientsState sends the latest version of the state object to every client
 func (c *ClientManager) UpdateClientsState(state *model.State) error {
 	payload, err := json.Marshal(state)
@@ -59,6 +68,7 @@ func (c *ClientManager) Run() {
 		select {
 		case client := <-c.register:
 			c.clients[client] = true
+			client.UpdateClientState(c.state)
 		case client := <-c.unregister:
 			if _, ok := c.clients[client]; ok {
 				delete(c.clients, client)
@@ -109,12 +119,10 @@ func (c *Client) writePump(manager *ClientManager) {
 			c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 			return
 		}
-		w, err := c.conn.NextWriter(websocket.TextMessage)
-		if err != nil {
-			fmt.Printf("websocket nextwriter err: %v\n", err)
+		if err := c.conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			fmt.Println("Failed to write message to websocket:", err)
 			return
 		}
-		w.Write(message)
 	}
 }
 

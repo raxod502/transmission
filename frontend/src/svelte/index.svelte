@@ -1,6 +1,11 @@
 <script>
   import "./index/global.svelte";
 
+  import { API } from "./index/api.js";
+
+  // Return a map { startTime: Date(...), endTime: Date(...) } that
+  // contains fake start and end timestamps for a game. This can be
+  // used in the fake state object.
   function getGameTimes() {
     const startTime = new Date();
     startTime.setSeconds(startTime.getSeconds() - 60);
@@ -8,6 +13,9 @@
     endTime.setSeconds(endTime.getSeconds() + 60 * 10);
     return { startTime, endTime };
   }
+
+  const api = new API();
+  api.connect();
 
   let state = {
     game: {
