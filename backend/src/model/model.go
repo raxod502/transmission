@@ -222,6 +222,15 @@ func (s *State) UpdateNode(newNode *UpdateNode) {
 	s.Graph.Nodes[newNode.Node.ID] = &newNode.Node
 }
 
+type RemoveNode struct {
+	EventName
+	NodeID NodeID
+}
+
+func (s *State) RemoveNode(nodeID NodeID) {
+	delete(s.Graph.Nodes, nodeID)
+}
+
 type UpdateGroup struct {
 	EventName
 	Group Group
@@ -229,6 +238,15 @@ type UpdateGroup struct {
 
 func (s *State) UpdateGroup(newGroup *UpdateGroup) {
 	s.Graph.Groups[newGroup.Group.ID] = &newGroup.Group
+}
+
+type RemoveGroup struct {
+	EventName
+	GroupID GroupID
+}
+
+func (s *State) RemoveGroup(groupID GroupID) {
+	delete(s.Graph.Groups, groupID)
 }
 
 type UpdateRealFactPossibilities struct {

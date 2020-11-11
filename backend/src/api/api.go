@@ -83,6 +83,15 @@ func HandleEvent(payload []byte, state *model.State) error {
 			state.UpdateNode(message)
 			return nil
 		},
+		"removeNode": func(payload []byte) error {
+			message := &model.RemoveNode{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			state.RemoveNode(message.NodeID)
+			return nil
+		},
 		"updateGroup": func(payload []byte) error {
 			message := &model.UpdateGroup{}
 			err := json.Unmarshal(payload, message)
@@ -90,6 +99,15 @@ func HandleEvent(payload []byte, state *model.State) error {
 				return err
 			}
 			state.UpdateGroup(message)
+			return nil
+		},
+		"removeGroup": func(payload []byte) error {
+			message := &model.RemoveGroup{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			state.RemoveGroup(message.GroupID)
 			return nil
 		},
 		"updateRealFactPossibilities": func(paylaod []byte) error {
