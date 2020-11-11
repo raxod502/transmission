@@ -111,7 +111,7 @@ state, some fields may be absent):
     "player-6b8c5cef-7888-4338-9b3e-5cb814b62408": {
       "name": "Owen",
       "id": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408",
-      "color": "#85DCB",
+      "color": "#085DCB",
       "node": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
       "role": "TD",
       "checks": []
@@ -131,7 +131,7 @@ state, some fields may be absent):
         "id": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
         "player": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408",
         "name": "Owen",
-        "color": "#85DCB",
+        "color": "#085DCB",
         "groups" : [
           "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
           "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
@@ -266,7 +266,7 @@ The client can send messages to update the state.
         "id": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
         "player": "player-6b8c5cef-7888-4338-9b3e-5cb814b62408",
         "name": "Owen",
-        "color": "#85DCB",
+        "color": "#085DCB",
         "groups" : [
           "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
           "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
