@@ -88,6 +88,7 @@ type Node struct {
 }
 
 type Group struct {
+	ID       GroupID
 	Messages []Message
 }
 
@@ -205,4 +206,13 @@ type UpdateNode struct {
 
 func (s *State) UpdateNode(newNode *UpdateNode) {
 	s.Graph.Nodes[newNode.Node.ID] = newNode.Node
+}
+
+type UpdateGroup struct {
+	EventName
+	Group Group
+}
+
+func (s *State) UpdateGroup(newGroup *UpdateGroup) {
+	s.Graph.Groups[newGroup.Group.ID] = newGroup.Group
 }

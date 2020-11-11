@@ -158,6 +158,7 @@ state, some fields may be absent):
     },
     "groups": {
       "group-f91095f6-d8e8-42f3-b239-79d988437c1b": {
+      "id": "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
         "messages": [
           {
             "timestamp": "2020-11-07T15:29:35Z",
@@ -172,6 +173,7 @@ state, some fields may be absent):
         ]
       },
       "group-e511762b-9fb9-4921-ae9f-b19b7a49a673": {
+      "id": "group-e511762b-9fb9-4921-ae9f-b19b7a49a673",
         "messages": [
           {
             "timestamp": "2020-11-07T15:30:45Z",
@@ -268,6 +270,25 @@ The client can send messages to update the state.
         "groups" : [
           "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
           "group-e511762b-9fb9-4921-ae9f-b19b7a49a673"
+        ]
+      }
+}
+
+{
+  "event": "updateGroup",
+  "group": {
+        "id": "group-f91095f6-d8e8-42f3-b239-79d988437c1b",
+        "messages": [
+          {
+            "timestamp": "2020-11-07T15:29:35Z",
+            "sender": "node-08424445-0d7c-4c09-8d64-49a113bf0149",
+            "text": "Hello Owen"
+          },
+          {
+            "timestamp": "2020-11-07T15:29:48Z",
+            "sender": "node-a3e0000f-fd5c-42e6-a1fb-060d8c5e5307",
+            "text": "Hi Radon"
+          }
         ]
       }
 }
