@@ -36,15 +36,16 @@ func NewState() *State {
 		},
 		Players: map[PlayerID]*Player{},
 		Graph: Graph{
-			Nodes:  map[NodeID]Node{},
-			Groups: map[GroupID]Group{},
+			Nodes:  map[NodeID]*Node{},
+			Groups: map[GroupID]*Group{},
 		},
 		Facts: Facts{
-			Real:      map[string]Fact{},
+			Real:      map[string]*Fact{},
 			Submitted: map[string]string{},
 		},
 	}
 }
+
 type State struct {
 	Game    Game
 	Players map[PlayerID]*Player
@@ -75,8 +76,8 @@ type Check struct {
 }
 
 type Graph struct {
-	Nodes  map[NodeID]Node
-	Groups map[GroupID]Group
+	Nodes  map[NodeID]*Node
+	Groups map[GroupID]*Group
 }
 
 type Node struct {
@@ -104,7 +105,7 @@ type Fact struct {
 }
 
 type Facts struct {
-	Real      map[string]Fact
+	Real      map[string]*Fact
 	Submitted map[string]string
 }
 
@@ -205,7 +206,7 @@ type UpdateNode struct {
 }
 
 func (s *State) UpdateNode(newNode *UpdateNode) {
-	s.Graph.Nodes[newNode.Node.ID] = newNode.Node
+	s.Graph.Nodes[newNode.Node.ID] = &newNode.Node
 }
 
 type UpdateGroup struct {
@@ -214,5 +215,20 @@ type UpdateGroup struct {
 }
 
 func (s *State) UpdateGroup(newGroup *UpdateGroup) {
-	s.Graph.Groups[newGroup.Group.ID] = newGroup.Group
+	s.Graph.Groups[newGroup.Group.ID] = &newGroup.Group
+}
+
+type UpdateRealFactPossibilities struct {
+	EventName
+	FactName       string
+	PossibleValues []string
+}
+
+func (s *State) UpdateRealFactPossibilities(newFact *UpdateRealFactPossibilities) {
+	updatedFact, ok := s.Facts.Real[newFact.FactName]
+	if !ok {
+		updatedFact = &Fact{}
+		s.Facts.Real[newFact.FactName] = updatedFact
+	}
+	updatedFact.Possible = newFact.PossibleValues
 }

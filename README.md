@@ -292,4 +292,9 @@ The client can send messages to update the state.
         ]
       }
 }
+{
+  "event": "updateRealFactPossibilities",
+  "factName": "color",
+  "possibleValues": ["red", "violet", "red violet", "violet red"]
+}
 ```

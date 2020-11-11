@@ -92,6 +92,15 @@ func HandleEvent(payload []byte, state *model.State) error {
 			state.UpdateGroup(message)
 			return nil
 		},
+		"updateRealFactPossibilities": func(paylaod []byte) error {
+			message := &model.UpdateRealFactPossibilities{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			state.UpdateRealFactPossibilities(message)
+			return nil
+		},
 	}
 	handler, ok := eventHandlers[event.Event]
 	if !ok {
