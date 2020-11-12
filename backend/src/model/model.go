@@ -34,7 +34,7 @@ const (
 func NewState() *State {
 	return &State{
 		Game: Game{
-			State: PLAYING, // change this later to LOBBY
+			State: LOBBY,
 		},
 		Players: map[PlayerID]*Player{},
 		Graph: Graph{
@@ -45,14 +45,22 @@ func NewState() *State {
 			Real:      map[string]*Fact{},
 			Submitted: map[string]string{},
 		},
+		PossibleRoles: []Role{
+			HEADQUARTERS,
+			TRAINDEPOT,
+			DOUBLEAGENT,
+			TRAINEXPERT,
+			FACTCHECKER,
+		},
 	}
 }
 
 type State struct {
-	Game    Game                 `json:"game"`
-	Players map[PlayerID]*Player `json:"players"`
-	Graph   Graph                `json:"graph"`
-	Facts   Facts                `json:"facts"`
+	Game          Game                 `json:"game"`
+	Players       map[PlayerID]*Player `json:"players"`
+	Graph         Graph                `json:"graph"`
+	Facts         Facts                `json:"facts"`
+	PossibleRoles []Role               `json:"possibleRoles"`
 }
 
 type Game struct {
@@ -68,7 +76,7 @@ type Player struct {
 	Role Role     `json:"role"`
 	// TODO: figure out best way to encode colors
 	Color  string  `json:"color"`
-	checks []Check `json:"checks"`
+	Checks []Check `json:"checks"`
 }
 
 type Check struct {
@@ -156,7 +164,7 @@ func (s *State) CheckFact(check *CheckFact) error {
 	if !ok {
 		return fmt.Errorf("no fact with name %v", check.Field)
 	}
-	guessingPlayer.checks = append(guessingPlayer.checks, Check{Name: check.Field, GuessedValue: check.Value, Correct: check.Value == fact.Value})
+	guessingPlayer.Checks = append(guessingPlayer.Checks, Check{Name: check.Field, GuessedValue: check.Value, Correct: check.Value == fact.Value})
 	return nil
 }
 

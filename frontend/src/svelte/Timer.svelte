@@ -6,10 +6,7 @@
     let startDate = new Date(startTime);
     let now = new Date();
     let originalLength = (endDate.getTime() - startDate.getTime())/1000;
- console.log(originalLength);
- console.log(now);
     let timeLeft = (endDate.getTime() - now.getTime())/1000;
- console.log(timeLeft);
 
     let timer = tweened(timeLeft)
   setInterval(() => {
