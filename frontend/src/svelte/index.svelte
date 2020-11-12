@@ -10,7 +10,8 @@
       state: "loading",
     },
   };
-  let user = getUser()
+  let user = getUser();
+  let config = false;
 
   const api = new API({
     onStateUpdate: (newState) => {
@@ -106,10 +107,19 @@
      };
      api.socket.send(JSON.stringify(message));
  }
+
+ function toggleConfig(){
+     config = !config
+ }
 </script>
 
 <main>
-  {#if state.game.state === 'loading'}
+  {#if config}
+      <div>
+      <p>Config</p>
+      <button on:click={toggleConfig}>Back to game</button>
+      </div>
+  {:else if state.game.state === 'loading'}
     Loading...
   {:else if state.game.state === 'lobby'}
       Lobby
@@ -130,6 +140,7 @@
           </div>
       {/if}
       <button on:click={startGame}> Start Game </button>
+      <button on:click={toggleConfig}> Config Panel </button>
   {:else}
     <div class="columns is-gapless">
       <div class="column is-three-quarters">
@@ -187,6 +198,7 @@
           </div>
           <div class="row" style="height: 25%">
             <p>Power</p>
+            <button on:click={toggleConfig}> Config Panel </button>
           </div>
         </div>
       </div>
