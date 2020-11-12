@@ -58,9 +58,13 @@
  function getUser(){
      let playerID = getPlayerID();
      if (state.players != undefined && state.players[playerID]!= undefined){
-         return {joined: true, name: state.players[playerID].name}
+         return {joined: true, player: state.players[playerID], name: state.players[playerID].name}
      }
-     return {joined: false, name: "Set your name here"}
+     return {
+         joined: false,
+         player: null,
+         name: "set your name here"
+     };
  }
 
  function getColor(playerID){
@@ -132,7 +136,7 @@
         <div class="rows" style="height: 100vh">
           <div class="row" style="height: 20%">
             <div class="columns is-gapless">
-              <div class="column">Name and role</div>
+              <div class="column">Name: {user.player.name} and role: {user.player.role} </div>
               <div class="column">Timer: <Timer startTime={state.game.startTime} endTime={state.game.stopTime}/></div>
             </div>
           </div>
