@@ -3,6 +3,7 @@
 
   import { API } from "./index/api.js";
   import { v4 as uuidv4 } from 'uuid';
+  import Timer from './Timer.svelte'
 
   let state = {
     game: {
@@ -77,7 +78,7 @@
      let id = getPlayerID();
      let player = state.players[id]
      let message = {
-         event: "updatePlayer"
+         event: "updatePlayer",
          player: {
              ...player,
              name: user.name
@@ -132,7 +133,7 @@
           <div class="row" style="height: 20%">
             <div class="columns is-gapless">
               <div class="column">Name and role</div>
-              <div class="column">Timer</div>
+              <div class="column">Timer: <Timer startTime={state.game.startTime} endTime={state.game.stopTime}/></div>
             </div>
           </div>
           <div class="row" style="height: 80%">
