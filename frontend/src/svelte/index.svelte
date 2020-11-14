@@ -47,6 +47,12 @@
      document.cookie = "playerID=" + newUUID + "; expires=Fri, 31 Dec 9999 23:59:59 GMT"
      return newUUID
  }
+ function goToLobby(){
+     let message = {
+         event: "startPregame"
+     };
+     api.socket.send(JSON.stringify(message));
+ }
 </script>
 
 <main>
@@ -114,6 +120,7 @@
           <div class="row" style="height: 25%">
             <p>Power</p>
             <button on:click={toggleConfig}> Config Panel </button>
+            <button on:click={goToLobby}> Return To Lobby </button>
           </div>
         </div>
       </div>
