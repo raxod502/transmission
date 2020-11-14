@@ -74,7 +74,7 @@
 
 <main>
   {#if config}
-      <Config players={state.players} availableRoles={state.possibleRoles} toggleConfig={toggleConfig} api={api} graph={state.graph}/>
+      <Config players={state.players} availableRoles={state.possibleRoles} toggleConfig={toggleConfig} api={api} graph={state.graph} facts={state.facts} possibleFacts={state.possibleFacts}/>
   {:else if state.game.state === 'loading'}
     Loading...
   {:else if state.game.state === 'lobby'}

@@ -5,6 +5,9 @@
  export let toggleConfig;
  export let api;
  export let graph;
+ export let possibleFacts;
+ export let facts;
+ let factsIncluded = {};
 
 function updatePlayer(id){
      let player = players[id];
@@ -86,6 +89,22 @@ function updatePlayer(id){
      };
      api.socket.send(JSON.stringify(message));
  }
+ function selectActiveFacts(){
+    let facts = {};
+    for (const [name, fact] of Object.entries(possibleFacts)){
+        if (factsIncluded[name]){
+            facts[name]=fact;
+        }
+    }
+    setRealFacts(facts);
+ }
+function setRealFacts(facts){
+     let message = {
+         event: "setRealFacts",
+         facts: facts
+     };
+     api.socket.send(JSON.stringify(message));
+}
 </script>
 <main>
     <p>Config</p>
@@ -151,5 +170,31 @@ function updatePlayer(id){
         </div>
     {/each}
     <button on:click={addGroup}> addGroup </button>
+    {#if facts.real}
+    <p>Current Facts</p>
+        {#each Object.entries(facts.real) as [name, fact]}
+            <div>
+                {name}: value:
+                <select bind:value={fact.value}>
+                    {#each fact.possible as possible}
+                        <option value={possible}>
+                            {possible}
+                        </option>
+                    {/each}
+                </select>
+            </div>
+        {/each}
+        <button on:click={()=>setRealFacts(facts.real)}> Update Values </button>
+    {/if}
+    Available Facts:
+    {#each Object.entries(possibleFacts) as [name, fact]}
+        <div>
+            <label>
+                <input type="checkbox" bind:checked={factsIncluded[name]}>
+            {name}
+            </label>
+        </div>
+    {/each}
+    <button on:click={selectActiveFacts}>Select Facts </button>
     <button on:click={toggleConfig}>Back to game</button>
 </main>

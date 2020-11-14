@@ -52,6 +52,20 @@ func NewState() *State {
 			TRAINEXPERT,
 			FACTCHECKER,
 		},
+		PossibleFacts: map[string]Fact{
+			"compartment": {
+				Possible: []string{"00", "17", "42"},
+				Value:    "42",
+			},
+			"color": {
+				Possible: []string{"red", "violet", "red violet", "violet red"},
+				Value:    "violet red",
+			},
+			"food": {
+				Possible: []string{"apple pie", "pecan pie", "pumpkin pie"},
+				Value:    "pecan pie",
+			},
+		},
 	}
 }
 
@@ -61,6 +75,7 @@ type State struct {
 	Graph         Graph                `json:"graph"`
 	Facts         Facts                `json:"facts"`
 	PossibleRoles []Role               `json:"possibleRoles"`
+	PossibleFacts map[string]Fact      `json:"possibleFacts"`
 }
 
 type Game struct {
@@ -270,4 +285,13 @@ func (s *State) UpdateRealFactPossibilities(newFact *UpdateRealFactPossibilities
 		s.Facts.Real[newFact.FactName] = updatedFact
 	}
 	updatedFact.Possible = newFact.PossibleValues
+}
+
+type SetRealFacts struct {
+	EventName
+	Facts map[string]*Fact
+}
+
+func (s *State) SetRealFacts(facts *SetRealFacts) {
+	s.Facts.Real = facts.Facts
 }

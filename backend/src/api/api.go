@@ -110,13 +110,22 @@ func HandleEvent(payload []byte, state *model.State) error {
 			state.RemoveGroup(message.GroupID)
 			return nil
 		},
-		"updateRealFactPossibilities": func(paylaod []byte) error {
+		"updateRealFactPossibilities": func(payload []byte) error {
 			message := &model.UpdateRealFactPossibilities{}
 			err := json.Unmarshal(payload, message)
 			if err != nil {
 				return err
 			}
 			state.UpdateRealFactPossibilities(message)
+			return nil
+		},
+		"setRealFacts": func(payload []byte) error {
+			message := &model.SetRealFacts{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			state.SetRealFacts(message)
 			return nil
 		},
 	}
