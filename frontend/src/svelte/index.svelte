@@ -6,6 +6,7 @@
   import Timer from './Timer.svelte'
   import Lobby from './Lobby.svelte'
   import Config from './Config.svelte'
+  import Submission from './Submission.svelte'
 
   let state = {
     game: {
@@ -79,14 +80,16 @@
     Loading...
   {:else if state.game.state === 'lobby'}
       <Lobby players={state.players} api={api} playerID={playerID} toggle={toggleConfig}/>
-  {:else}
+  {:else if state.game.state === 'submission'}
+      <Submission player={state.players[playerID]} api={api} toggle={toggleConfig} facts={state.facts}/>
+  {:else if state.game.state === 'playing'}
     <div class="columns is-gapless">
       <div class="column is-three-quarters">
         <div class="rows" style="height: 100vh">
           <div class="row" style="height: 20%">
             <div class="columns is-gapless">
               <div class="column">Name: {state.players[playerID].name} and role: {state.players[playerID].role}</div>
-              <div class="column">Timer: <Timer startTime={state.game.startTime} endTime={state.game.stopTime}/></div>
+              <div class="column">Timer: <Timer startTime={state.game.startTime} endTime={state.game.stopTime} api={api}/></div>
             </div>
           </div>
           <div class="row" style="height: 80%">
@@ -144,5 +147,8 @@
         </div>
       </div>
     </div>
-  {/if}
+    {:else if state.game.state === 'results'}
+      TODO: implement results page
+      <button on:click={goToLobby}> Return To Lobby </button>
+    {/if}
 </main>

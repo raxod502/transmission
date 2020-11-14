@@ -158,8 +158,8 @@ func (s *State) RemovePlayer(id PlayerID) error {
 	return nil
 }
 
-// TODO: Not sure what this should do
 func (s *State) StopGame() error {
+	s.Game.State = SUBMISSION
 	return nil
 }
 
@@ -218,6 +218,7 @@ type SubmitFacts struct {
 
 func (s *State) SubmitFacts(submission map[string]string) {
 	s.Facts.Submitted = submission
+	s.Game.State = RESULTS
 }
 
 type SendMessage struct {

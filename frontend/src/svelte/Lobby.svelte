@@ -51,7 +51,7 @@
      return randomColor()
  }
  function startGame(){
-     const gameLengthMin = 10;
+     const gameLengthMin = 1;
      let currentTime = new Date();
      let message = {
          event: "startGame",
