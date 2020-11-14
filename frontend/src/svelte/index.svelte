@@ -14,6 +14,7 @@
   };
   let config = false;
  let playerID = getPlayerID();
+ let composedMessages = {};
 
   const api = new API({
     onStateUpdate: (newState) => {
@@ -53,6 +54,22 @@
      };
      api.socket.send(JSON.stringify(message));
  }
+ function checkForSend(groupID){
+     if (event.code == 'Enter'){
+         console.log("sending", composedMessages[groupID], "to", groupID);
+         sendMessage(groupID, state.players[playerID].node, composedMessages[groupID])
+         composedMessages[groupID] = "";
+     }
+ }
+ function sendMessage(groupID, sender, text){
+     let message = {
+         event: "sendMessage",
+         groupID: groupID,
+         sender: sender,
+         text: text
+     }
+     api.socket.send(JSON.stringify(message));
+ }
 </script>
 
 <main>
@@ -77,20 +94,22 @@
               {#if Object.keys(state.graph.groups).length === 0}
                 <p>No conversations</p>
               {:else}
-                {#each Object.entries(state.graph.groups) as [_, { recipients, messages }]}
-                  <div class="column">
-                    <div class="rows">
-                      <div class="row">
-                        Conversation with
-                        {recipients.join(', ')}
-                      </div>
-                      <div class="row">
-                        {#each messages as { sender, text }}
-                          <p>{sender}: {text}</p>
-                        {/each}
+                {#each state.graph.nodes[state.players[playerID].node].groups as groupID}
+                  {#if state.graph.groups[groupID]}
+                    <div class="column">
+                      <div class="rows">
+                          <div class="row">
+                              Conversation with: TODO
+                          </div>
+                          <div class="row">
+                          {#each state.graph.groups[groupID].messages as { sender, text }}
+                            <p style="color: {state.graph.nodes[sender].color}">{state.graph.nodes[sender].name}: {text}</p>
+                          {/each}
+                          <input type="text" on:keyup|preventDefault={()=>checkForSend(groupID)} bind:value={composedMessages[groupID]}>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  {/if}
                 {/each}
               {/if}
             </div>
