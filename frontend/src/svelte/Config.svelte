@@ -116,17 +116,19 @@ function updatePlayer(id){
             {nodeID}
             <button on:click={()=>removeNode(nodeID)}> Remove </button>
             <div>
-                Associated Groups:
-                <ul>
-                    {#each node.groups as groupID}
-                        <li>
-                            {groupID}
-                            <button on:click={()=>disassociateGroup(node, groupID)}>
-                                Remove
-                            </button>
-                        </li>
-                    {/each}
-                </ul>
+                {#if node.groups}
+                    Associated Groups:
+                    <ul>
+                        {#each node.groups as groupID}
+                            <li>
+                                {groupID}
+                                <button on:click={()=>disassociateGroup(node, groupID)}>
+                                    Remove
+                                </button>
+                            </li>
+                        {/each}
+                    </ul>
+                {/if}
                 <form on:submit|preventDefault={() => associateGroup(nodeID)}>
                     <select bind:value={groupsToAdd[nodeID]}>
                         {#each Object.entries(graph.groups) as [groupID, _]}
