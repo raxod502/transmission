@@ -95,7 +95,7 @@ type Node struct {
 	Player PlayerID  `json:"player"`
 	Name   string    `json:"name"`
 	Color  string    `json:"color"`
-	Groups []GroupID `json:"groups"`
+	Groups []GroupID `json:"groups"` //TODO this should be a set
 }
 
 type Group struct {

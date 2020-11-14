@@ -4,25 +4,29 @@
   import { API } from "./index/api.js";
   import { v4 as uuidv4 } from 'uuid';
   import Timer from './Timer.svelte'
+  import Lobby from './Lobby.svelte'
+  import Config from './Config.svelte'
 
   let state = {
     game: {
       state: "loading",
     },
   };
-  let user = getUser();
   let config = false;
+ let playerID = getPlayerID();
 
   const api = new API({
     onStateUpdate: (newState) => {
       console.log("Received state update:", newState);
       state = newState;
-      user = getUser(); //TODO: figure out how to make this reactive the nice way
-
+      state.players = newState.players;
     },
   });
   api.connect();
 
+ function toggleConfig(){
+     config = !config
+ }
  function getPlayerIDFromCookie(){
      let currentID = document.cookie
                              .split('; ')
@@ -43,111 +47,22 @@
      document.cookie = "playerID=" + newUUID + "; expires=Fri, 31 Dec 9999 23:59:59 GMT"
      return newUUID
  }
-
- function startGame(){
-     const gameLengthMin = 10;
-     let currentTime = new Date();
-     let message = {
-         event: "startGame",
-         stopTime: new Date(currentTime.getTime() + gameLengthMin * 60000),
-     };
-    api.socket.send(JSON.stringify(message));
- }
-
- // Populates the user object with defaults if no cookie
- // and actual data if the cookie is present
- function getUser(){
-     let playerID = getPlayerID();
-     if (state.players != undefined && state.players[playerID]!= undefined){
-         return {joined: true, player: state.players[playerID], name: state.players[playerID].name}
-     }
-     return {
-         joined: false,
-         player: null,
-         name: "set your name here"
-     };
- }
-
- function getColor(playerID){
-     if (state.players && state.players[playerID] && state.players[playerID].color){
-         return state.players[playerID].color
-     }
-     return randomColor()
- }
-
- function randomColor(){
-    return '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')
- }
-
- function updateName(){
-     let id = getPlayerID();
-     let player = state.players[id]
-     let message = {
-         event: "updatePlayer",
-         player: {
-             ...player,
-             name: user.name
-         }
-     };
-     api.socket.send(JSON.stringify(message));
- }
-
- function joinGame(){
-     user.joined = true;
-     let id = getPlayerID();
-     let message = {
-         event: "updatePlayer" ,
-         player: {
-             name: user.name,
-             id: id,
-             color: getColor(id),
-             node: null,
-             groups: [],
-         }
-     };
-     api.socket.send(JSON.stringify(message));
- }
-
- function toggleConfig(){
-     config = !config
- }
 </script>
 
 <main>
   {#if config}
-      <div>
-      <p>Config</p>
-      <button on:click={toggleConfig}>Back to game</button>
-      </div>
+      <Config players={state.players} availableRoles={state.possibleRoles} toggleConfig={toggleConfig} api={api} graph={state.graph}/>
   {:else if state.game.state === 'loading'}
     Loading...
   {:else if state.game.state === 'lobby'}
-      Lobby
-      {#each Object.entries(state.players) as [_, { name, color }]}
-          <div style="color: {color}"> {name}</div>
-      {/each}
-      {#if !user.joined}
-          <div>
-            Name:
-            <input bind:value={user.name}>
-            <button on:click={joinGame}> Join </button>
-          </div>
-      {:else}
-          <div>
-            Update Name:
-            <input bind:value={user.name}>
-            <button on:click={updateName}> Submit </button>
-          </div>
-      {/if}
-      <button on:click={startGame}> Start Game </button>
-      <button on:click={toggleConfig}> Config Panel </button>
+      <Lobby players={state.players} api={api} playerID={playerID} toggle={toggleConfig}/>
   {:else}
     <div class="columns is-gapless">
       <div class="column is-three-quarters">
         <div class="rows" style="height: 100vh">
           <div class="row" style="height: 20%">
             <div class="columns is-gapless">
-              <div class="column">Name: {user.player.name} and role: {user.player.role} </div>
+              <div class="column">Name: {state.players[playerID].name} and role: {state.players[playerID].role}</div>
               <div class="column">Timer: <Timer startTime={state.game.startTime} endTime={state.game.stopTime}/></div>
             </div>
           </div>
