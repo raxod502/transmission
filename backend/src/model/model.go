@@ -90,8 +90,9 @@ type Player struct {
 	ID   PlayerID `json:"id"`
 	Role Role     `json:"role"`
 	// TODO: figure out best way to encode colors
-	Color  string  `json:"color"`
-	Checks []Check `json:"checks"`
+	Color      string          `json:"color"`
+	Checks     []Check         `json:"checks"`
+	KnownRoles map[NodeID]Role `json:"knownRoles"`
 }
 
 type Check struct {
@@ -295,4 +296,23 @@ type SetRealFacts struct {
 
 func (s *State) SetRealFacts(facts *SetRealFacts) {
 	s.Facts.Real = facts.Facts
+}
+
+type AddKnownRole struct {
+	EventName
+	PlayerID PlayerID
+	NodeID   NodeID
+	Role     Role
+}
+
+func (s *State) AddKnownRole(message *AddKnownRole) error {
+	player, ok := s.Players[message.PlayerID]
+	if !ok {
+		return fmt.Errorf("player with id %v does not exist", message.PlayerID)
+	}
+	if player.KnownRoles == nil {
+		player.KnownRoles = map[NodeID]Role{}
+	}
+	player.KnownRoles[message.NodeID] = message.Role
+	return nil
 }

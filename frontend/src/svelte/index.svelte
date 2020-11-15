@@ -7,6 +7,7 @@
   import Lobby from "./Lobby.svelte";
   import Config from "./Config.svelte";
   import Submission from "./Submission.svelte";
+  import Power from "./Power.svelte";
 
   let state = {
     game: {
@@ -155,10 +156,10 @@
           <div class="row" style="height: 25%">Network</div>
           <div class="row" style="height: 25%">
             <p>Facts</p>
-            {#each Object.entries(state.facts.real) as [id, { name, possible, value }]}
+            {#each Object.entries(state.facts.real) as [name, { possible, value }]}
               <p>
-                <label for="fact-dropdown-{id}">{name}</label>
-                <select name="fact-dropdown-{id}" {value}>
+                <label for="fact-dropdown-{name}">{name}</label>
+                <select name="fact-dropdown-{name}" {value}>
                   {#each possible as value}
                     <option {value}>{value}</option>
                   {/each}
@@ -171,7 +172,7 @@
             <textarea />
           </div>
           <div class="row" style="height: 25%">
-            <p>Power</p>
+            <Power role={state.players[playerID].role} state={state} api={api} playerID={playerID}/>
             <button on:click={toggleConfig}> Config Panel </button>
             <button on:click={goToLobby}> Return To Lobby </button>
           </div>

@@ -128,6 +128,14 @@ func HandleEvent(payload []byte, state *model.State) error {
 			state.SetRealFacts(message)
 			return nil
 		},
+		"addKnownRole": func(payload []byte) error {
+			message := &model.AddKnownRole{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			return state.AddKnownRole(message)
+		},
 	}
 	handler, ok := eventHandlers[event.Event]
 	if !ok {
