@@ -18,11 +18,15 @@
     return {
       joined: false,
       player: null,
-      name: "set your name here",
+      name: "",
     };
   }
 
   function joinGame(id) {
+    if (!user.name) {
+      alert("Please enter your name before joining the game.");
+      return;
+    }
     user.joined = true;
     let message = {
       event: "updatePlayer",
@@ -86,7 +90,7 @@
   {#if !user.joined}
     <div>
       Name:
-      <input bind:value={user.name} />
+      <input bind:value={user.name} placeholder="Your name" />
       <button on:click={() => joinGame(playerID)}> Join </button>
     </div>
   {:else}
