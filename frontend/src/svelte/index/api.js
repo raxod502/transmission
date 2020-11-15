@@ -14,6 +14,7 @@ export class API {
         document.location.host +
         "/api/v1/ws"
     );
+    window.socket = this.socket;
     this.socket.addEventListener("open", () => {
       console.log("Connected to websocket.");
     });

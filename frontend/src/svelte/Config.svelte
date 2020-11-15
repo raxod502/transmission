@@ -1,5 +1,7 @@
 <script>
   import { v4 as uuidv4 } from "uuid";
+  import Graph from "./Graph.svelte";
+
   export let players;
   export let availableRoles;
   export let toggleConfig;
@@ -126,10 +128,11 @@
       <button style="submit"> Update </button>
     </form>
   {/each}
+  <Graph stateGraph={graph} />
   <p>Nodes</p>
   {#each Object.entries(graph.nodes) as [nodeID, node]}
-    <div>
-      {nodeID}
+    <div style="border: 1px solid black; margin: 2px">
+      <b>{nodeID}</b>
       <button on:click={() => removeNode(nodeID)}> Remove </button>
       <div>
         {#if node.groups}

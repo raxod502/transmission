@@ -9,6 +9,9 @@
 
   function updateGraph(s, stateGraph) {
     if (s === undefined) return;
+    for (const node of s.graph.nodes()) {
+      s.graph.dropNode(node.id);
+    }
     const edges = new Map();
     for (const [nodeID, { groups: groupIDs }] of Object.entries(
       stateGraph.nodes
@@ -17,6 +20,10 @@
       s.graph.addNode({
         id: nodeID,
         label: nodeID,
+        x: Math.random(),
+        y: Math.random(),
+        size: 1,
+        color: "#f00",
       });
       for (const groupID of groupIDs) {
         let groupNodeIDs = edges.get(groupID);
@@ -57,4 +64,4 @@
   });
 </script>
 
-<div bind:this={container} />
+<div bind:this={container} style="height: 200px" />

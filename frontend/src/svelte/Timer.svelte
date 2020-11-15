@@ -32,7 +32,8 @@
 
 <main>
   <h1>
-    <span class="mins">{minutes}</span>:<span class="secs">{seconds}</span>
+    <span class="mins">{minutes}</span>:<span
+      class="secs">{('' + seconds).padStart(2, '0')}</span>
     !
   </h1>
   <progress value={$timer / originalLength} />
