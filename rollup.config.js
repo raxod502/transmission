@@ -2,6 +2,7 @@
 
 import commonjs from "@rollup/plugin-commonjs";
 import livereload from "rollup-plugin-livereload";
+import nodePolyfills from "rollup-plugin-node-polyfills";
 import postcss from "rollup-plugin-postcss";
 import resolve from "@rollup/plugin-node-resolve";
 import svelte from "rollup-plugin-svelte";
@@ -27,6 +28,7 @@ export default {
       preprocess: sveltePreprocess(),
     }),
     postcss(),
+    nodePolyfills(),
     resolve({
       browser: true,
       dedupe: ["svelte"],

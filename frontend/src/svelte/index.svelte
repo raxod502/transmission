@@ -3,6 +3,7 @@
 
   import { API } from "./index/api.js";
   import { v4 as uuidv4 } from "uuid";
+  import Graph from "./Graph.svelte";
   import Timer from "./Timer.svelte";
   import Lobby from "./Lobby.svelte";
   import Config from "./Config.svelte";
@@ -152,7 +153,10 @@
       </div>
       <div class="column">
         <div class="rows" style="height: 100vh">
-          <div class="row" style="height: 25%">Network</div>
+          <div class="row" style="height: 25%">
+            <p>Network</p>
+            <Graph stateGraph={state.graph} />
+          </div>
           <div class="row" style="height: 25%">
             <p>Facts</p>
             {#each Object.entries(state.facts.real) as [id, { name, possible, value }]}
