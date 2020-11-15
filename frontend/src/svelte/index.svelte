@@ -59,7 +59,7 @@
     api.socket.send(JSON.stringify(message));
   }
   function checkForSend(groupID) {
-    if (event.code == "Enter") {
+    if (event.code == "Enter" && composedMessages[groupID] !== "") {
       console.log("sending", composedMessages[groupID], "to", groupID);
       sendMessage(
         groupID,
