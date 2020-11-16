@@ -29,5 +29,5 @@ image-run:
 
 .PHONY: deploy
 deploy:
-	heroku container:push web
-	heroku container:release web
+	heroku container:push web -a transmission-game
+	heroku container:release web -a transmission-game
