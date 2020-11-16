@@ -1,15 +1,16 @@
 <script>
  export let playerID;
  export let players;
+ export let nodes;
  export let api;
- let role = "Train Depot";
+ export let role = "Train Depot";
  let uses = 1;
  console.log(uses)
- console.log
+ console.log(players[playerID].knownRoles)
  function addKnownRole(role){
      var nodeID;
      for (const [_, player] of Object.entries(players)){
-         if (player.role === role){
+         if (player.role === role && player.id != playerID){
              nodeID = player.node;
          }
      }
@@ -30,12 +31,16 @@
 </script>
 <main>
     {#if uses > 0}
-        <button on:click={()=>addKnownRole(role)}>Reveal Train Expert</button>
+        <button on:click={()=>addKnownRole(role)}>Reveal {role}</button>
     {:else}
-        {#each Object.entries(players[playerID].knownRoles) as [nodeID, role]}
-            <div>
-                {nodeID} is {role}
-            </div>
-        {/each}
+        {#if players[playerID].knownRoles}
+            {#each Object.entries(players[playerID].knownRoles) as [nodeID, role]}
+                <div>
+                    {nodes[nodeID].name} is {role}
+                </div>
+            {/each}
+        {:else }
+            Loading...
+        {/if}
     {/if}
 </main>

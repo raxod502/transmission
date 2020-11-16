@@ -4,10 +4,12 @@
   import { API } from "./index/api.js";
   import { v4 as uuidv4 } from "uuid";
   import Graph from "./Graph.svelte";
+  import FixedGraph from "./FixedGraph.svelte";
   import Timer from "./Timer.svelte";
   import Lobby from "./Lobby.svelte";
   import Config from "./Config.svelte";
   import Submission from "./Submission.svelte";
+  import Results from "./Results.svelte";
   import Power from "./Power.svelte";
 
   let state = {
@@ -15,6 +17,7 @@
       state: "loading",
     },
   };
+ let selectedFacts = {};
   let config = false;
   let playerID = getPlayerID();
   let composedMessages = {};
@@ -111,6 +114,13 @@
                 {state.players[playerID].name}
                 and role:
                 {state.players[playerID].role}
+                {#if state.players[playerID].knownFacts}
+                    {#each Object.entries(state.players[playerID].knownFacts) as [name, _]}
+                      <div>
+                          You know that the {name} is {state.facts.real[name].value}
+                      </div>
+                    {/each}
+                {/if}
               </div>
               <div class="column">
                 Timer:
@@ -130,9 +140,8 @@
                   {#if state.graph.groups[groupID]}
                     <div class="column">
                       <div class="rows">
-                        <div class="row">Conversation with: TODO</div>
                         <div class="row">
-                          {#each state.graph.groups[groupID].messages as { sender, text }}
+                          {#each state.graph.groups[groupID].messages.slice(-20) as { sender, text }}
                             <p style="color: {state.graph.nodes[sender].color}">
                               {state.graph.nodes[sender].name}:
                               {text}
@@ -156,14 +165,14 @@
         <div class="rows" style="height: 100vh">
           <div class="row" style="height: 25%">
             <p>Network</p>
-            <Graph stateGraph={state.graph} />
+            <FixedGraph stateGraph={state.graph} />
           </div>
           <div class="row" style="height: 25%">
             <p>Facts</p>
             {#each Object.entries(state.facts.real) as [name, { possible, value }]}
               <p>
                 <label for="fact-dropdown-{name}">{name}</label>
-                <select name="fact-dropdown-{name}" {value}>
+                <select name="fact-dropdown-{name}" bind:value={selectedFacts[name]}>
                   {#each possible as value}
                     <option {value}>{value}</option>
                   {/each}
@@ -176,7 +185,7 @@
             <textarea />
           </div>
           <div class="row" style="height: 25%">
-            <Power role={state.players[playerID].role} state={state} api={api} playerID={playerID}/>
+            <Power role={state.players[playerID].role} state={state} api={api} playerID={playerID} selectedFacts={selectedFacts}/>
             <button on:click={toggleConfig}> Config Panel </button>
             <button on:click={goToLobby}> Return To Lobby </button>
           </div>
@@ -184,7 +193,7 @@
       </div>
     </div>
   {:else if state.game.state === 'results'}
-    TODO: implement results page
+    <Results facts={state.facts} players={state.players}/>
     <button on:click={goToLobby}> Return To Lobby </button>
   {/if}
 </main>

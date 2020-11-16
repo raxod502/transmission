@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -32,14 +33,85 @@ const (
 )
 
 func NewState() *State {
+	rand.Seed(time.Now().UnixNano())
+	possibleCompartments := []string{}
+	for i := 0; i < 50; i++ {
+		possibleCompartments = append(possibleCompartments, strconv.Itoa(i))
+	}
 	return &State{
 		Game: Game{
 			State: LOBBY,
 		},
 		Players: map[PlayerID]*Player{},
 		Graph: Graph{
-			Nodes:  map[NodeID]*Node{},
-			Groups: map[GroupID]*Group{},
+			Nodes: map[NodeID]*Node{
+				"node-1": {
+					ID:     "node-1",
+					Groups: []GroupID{"group-1-2", "group-6-1", "group-1-4"},
+				},
+				"node-2": {
+					ID:     "node-2",
+					Groups: []GroupID{"group-1-2", "group-2-3", "group-2-5"},
+				},
+				"node-3": {
+					ID:     "node-3",
+					Groups: []GroupID{"group-2-3", "group-3-4", "group-3-6"},
+				},
+				"node-4": {
+					ID:     "node-4",
+					Groups: []GroupID{"group-3-4", "group-4-5", "group-1-4"},
+				},
+				"node-5": {
+					ID:     "node-5",
+					Groups: []GroupID{"group-4-5", "group-5-6", "group-2-5"},
+				},
+				"node-6": {
+					ID:     "node-6",
+					Groups: []GroupID{"group-5-6", "group-6-1", "group-3-6"},
+				},
+			},
+			Groups: map[GroupID]*Group{
+				"group-1-2": {
+					ID:       "group-1-2",
+					Messages: []Message{},
+				},
+				"group-2-3": {
+					ID:       "group-2-3",
+					Messages: []Message{},
+				},
+				"group-3-4": {
+					ID:       "group-3-4",
+					Messages: []Message{},
+				},
+				"group-4-5": {
+					ID:       "group-4-5",
+					Messages: []Message{},
+				},
+				"group-5-6": {
+					ID:       "group-5-6",
+					Messages: []Message{},
+				},
+				"group-6-1": {
+					ID:       "group-6-1",
+					Messages: []Message{},
+				},
+				"group-1-4": {
+					ID:       "group-1-4",
+					Messages: []Message{},
+				},
+				"group-2-5": {
+					ID:       "group-2-5",
+					Messages: []Message{},
+				},
+				"group-3-6": {
+					ID:       "group-3-6",
+					Messages: []Message{},
+				},
+				"group-baddies": {
+					ID:       "group-baddies",
+					Messages: []Message{},
+				},
+			},
 		},
 		Facts: Facts{
 			Real:      map[string]*Fact{},
@@ -54,16 +126,75 @@ func NewState() *State {
 		},
 		PossibleFacts: map[string]Fact{
 			"compartment": {
-				Possible: []string{"00", "17", "42"},
+				Possible: possibleCompartments,
 				Value:    "42",
 			},
 			"color": {
-				Possible: []string{"red", "violet", "red violet", "violet red"},
-				Value:    "violet red",
+				Possible: []string{
+					"Black",
+					"Blue",
+					"Blue Green",
+					"Blue Violet",
+					"Brown",
+					"Carnation Pink",
+					"Dandelion",
+					"Gray",
+					"Green",
+					"Cerulean",
+					"Green Yellow",
+					"Orange",
+					"Apricot",
+					"Scarlet",
+					"Red",
+					"Red Orange",
+					"Red Violet",
+					"Violet",
+					"Indigo",
+					"Violet Red",
+					"White",
+					"Yellow",
+					"Yellow Green",
+					"Yellow Orange",
+				},
+				Value: "violet red",
 			},
 			"food": {
-				Possible: []string{"apple pie", "pecan pie", "pumpkin pie"},
-				Value:    "pecan pie",
+				Possible: []string{
+					"Roast Turkey",
+					"Green Bean Casserole",
+					"Candied Yams",
+					"Mashed Potatoes",
+					"Gravy",
+					"Dry Brined Turkey",
+					"Stuffing",
+					"Cranberry Sauce",
+					"Pumpkin Pie",
+					"Cranberry Stuffing",
+					"Ranch-seasoned Roast Turkey",
+					"Cornbread Dressing",
+					"Sausage Gravy",
+					"Sweet Potato Casserole With Marshmallows",
+					"Cornbread Stuffing",
+					"Apple Pie",
+					"Roasted Vegetables",
+					"Turkey Cake",
+					"Garlic Mashed Potatoes",
+					"Roasted Butternut Squash Soup",
+					"Brown Butter Mashed Potatoes",
+					"Roasted Brussel Sprouts",
+					"Mashed Sweet Potatoes",
+					"Gravy Without Drippings",
+					"Pecan Pie",
+					"Sweet Potato Casserole",
+					"Garlicky Green Beans with Crispy Onions",
+					"Baked Sweet Potato",
+					"Skillet Green Beans",
+					"Cheesy Sweet Potato Casserole",
+					"Butternut Squash and Andouille Stuffing",
+					"Dark Chocolate Bourbon Pecan Pie",
+					"Green Bean Casserole with Onion Rings",
+				},
+				Value: "pecan pie",
 			},
 		},
 	}
@@ -93,6 +224,7 @@ type Player struct {
 	Color      string          `json:"color"`
 	Checks     []Check         `json:"checks"`
 	KnownRoles map[NodeID]Role `json:"knownRoles"`
+	KnownFacts map[string]bool `json:"knownFacts"`
 }
 
 type Check struct {
@@ -218,6 +350,10 @@ type SubmitFacts struct {
 }
 
 func (s *State) SubmitFacts(submission map[string]string) {
+	// Delete messages from current game
+	for _, group := range s.Graph.Groups {
+		group.Messages = []Message{}
+	}
 	s.Facts.Submitted = submission
 	s.Game.State = RESULTS
 }
@@ -314,5 +450,25 @@ func (s *State) AddKnownRole(message *AddKnownRole) error {
 		player.KnownRoles = map[NodeID]Role{}
 	}
 	player.KnownRoles[message.NodeID] = message.Role
+	return nil
+}
+
+type AddKnownFact struct {
+	EventName
+	PlayerID PlayerID
+	Names    []string
+}
+
+func (s *State) AddKnownFact(message *AddKnownFact) error {
+	player, ok := s.Players[message.PlayerID]
+	if !ok {
+		return fmt.Errorf("player with id %v does not exist", message.PlayerID)
+	}
+	if player.KnownFacts == nil {
+		player.KnownFacts = map[string]bool{}
+	}
+	for _, name := range message.Names {
+		player.KnownFacts[name] = true
+	}
 	return nil
 }

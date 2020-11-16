@@ -10,6 +10,7 @@
   export let possibleFacts;
   export let facts;
   let factsIncluded = {};
+  let knownFacts = {};
 
   function updatePlayer(id) {
     let player = players[id];
@@ -107,6 +108,14 @@
     };
     api.socket.send(JSON.stringify(message));
   }
+  function addKnownFact(id, factName){
+      let message = {
+          event: "addKnownFact",
+          playerID: id,
+          names: [factName]
+      };
+      api.socket.send(JSON.stringify(message));
+  }
 </script>
 
 <main>
@@ -127,6 +136,12 @@
       </select>
       <button style="submit"> Update </button>
     </form>
+    <select bind:value={knownFacts[id]}>
+        {#each Object.entries(facts.real) as [name, _]}
+            <option value={name}>{name}</option>
+        {/each}
+    </select>
+    <button on:click={()=>addKnownFact(id, knownFacts[id])}>Update Known Fact </button>
   {/each}
   <Graph stateGraph={graph} />
   <p>Nodes</p>

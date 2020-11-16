@@ -3,6 +3,7 @@
   export let api;
   export let playerID;
   export let toggle;
+  let gameLength=10;
   let user = getUser(); // TODO: how to recompute when players changes
 
   // Populates the user object with defaults if no cookie
@@ -58,7 +59,7 @@
     return randomColor();
   }
   function startGame() {
-    const gameLengthMin = 100;
+    const gameLengthMin = gameLength;
     let currentTime = new Date();
     let message = {
       event: "startGame",
@@ -101,6 +102,7 @@
       <button on:click={() => removePlayer(playerID)}> Leave Game </button>
     </div>
   {/if}
+  <input type=number bind:value={gameLength} min=0 max=10>
   <button on:click={startGame}> Start Game </button>
   <button on:click={toggle}> Config </button>
 </main>
