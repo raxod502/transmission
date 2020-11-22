@@ -26,6 +26,10 @@ export default {
         css.write("index.css", !production);
       },
       preprocess: sveltePreprocess(),
+      onwarn: (warning, handler) => {
+        if (warning.code === "a11y-autofocus") return;
+        handler(warning);
+      },
     }),
     postcss(),
     nodePolyfills(),

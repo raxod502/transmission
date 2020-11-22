@@ -110,37 +110,79 @@
   }
 </script>
 
-<main>
-  Lobby
-  {#each Object.values(players).sort(({ name: n1 }, { name: n2 }) =>
-    n1.localeCompare(n2)
-  ) as { name, color }}
-    <div style="color: {color}">{name}</div>
-  {/each}
-  {#if !user.joined}
-    <div>
-      Name:
-      <form>
-        <input bind:value={user.name} placeholder="Your name" />
-        <button type="submit" on:click={() => joinGame(playerID)}>
-          Join
-        </button>
+<main
+  style="min-height: 100vh; display: flex; justify-content:
+             center; align-items: center">
+  <div>
+    <div class="has-text-centered">
+      <b style="text-decoration: underline"> Players in the lobby </b>
+      {#each Object.values(players).sort(({ name: n1 }, { name: n2 }) =>
+        n1.localeCompare(n2)
+      ) as { name, color }}
+        <div style="color: {color}">{name}</div>
+      {/each}
+    </div>
+    {#if !user.joined}
+      <div class="my-5">
+        Name:
+        <form class="field is-grouped">
+          <p class="control">
+            <input
+              bind:value={user.name}
+              class="input"
+              placeholder="Your name"
+              autofocus />
+          </p>
+          <p class="control">
+            <button
+              type="submit"
+              class="button is-link"
+              on:click={() => joinGame(playerID)}>
+              Join
+            </button>
+          </p>
+        </form>
+      </div>
+    {:else}
+      <div class="my-5">
+        Update name:
+        <form class="field is-grouped">
+          <p class="control"><input bind:value={user.name} class="input" /></p>
+          <p class="control">
+            <button
+              type="submit"
+              class="button is-link"
+              on:click={() => updateName(playerID)}>Update name</button>
+          </p>
+          <p class="control">
+            <button
+              type="button"
+              class="button is-danger"
+              on:click={() => removePlayer(playerID)}>Leave Game</button>
+          </p>
+        </form>
+      </div>
+    {/if}
+    <div class="my-5">
+      Start game:
+      <form class="field is-grouped">
+        <p class="control">
+          <input
+            class="input"
+            type="number"
+            bind:value={gameLength}
+            min="0"
+            max="480" />
+        </p>
+        <p class="control">
+          <button type="submit" class="button is-success" on:click={startGame}>
+            Start Game
+          </button>
+        </p>
       </form>
     </div>
-  {:else}
-    <div>
-      Update name:
-      <form>
-        <input bind:value={user.name} />
-        <button type="submit" on:click={() => updateName(playerID)}>Update name</button>
-        <button type="button" on:click={() => removePlayer(playerID)}>Leave Game</button>
-      </form>
-    </div>
-  {/if}
-  Game length, minutes:
-  <form>
-    <input type="number" bind:value={gameLength} min="0" max="10" />
-    <button type="submit" on:click={startGame}> Start Game </button>
-  </form>
-  <button on:click={toggle}> Config </button>
+    <button on:click={toggle} class="my-5 is-pulled-right button is-light">
+      Admin panel
+    </button>
+  </div>
 </main>
