@@ -3,8 +3,24 @@
   export let api;
   export let playerID;
   export let toggle;
-  let gameLength=10;
+  let gameLength = 10;
   let user = getUser(); // TODO: how to recompute when players changes
+
+  // https://sashamaps.net/docs/resources/20-colors/
+  const distinctColors = [
+    "#e6194B", // Red
+    "#3cb44b", // Green
+    "#4363d8", // Blue
+    "#f58231", // Orange
+    "#911eb4", // Purple
+    "#f032e6", // Magenta
+    "#469990", // Teal
+    "#9A6324", // Brown
+    "#800000", // Maroon
+    "#808000", // Olive
+    "#000075", // Navy
+    "#a9a9a9", // Grey
+  ];
 
   // Populates the user object with defaults if no cookie
   // and actual data if the cookie is present
@@ -69,6 +85,17 @@
   }
 
   function randomColor() {
+    const usedColors = new Set();
+    for (const [_, { color }] of Object.entries(players)) {
+      usedColors.add(color);
+    }
+    for (const color of distinctColors) {
+      if (!usedColors.has(color)) {
+        return color;
+      }
+    }
+    // If all distinct colors have been used, just pick something
+    // random.
     return (
       "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0")
     );
@@ -102,7 +129,7 @@
       <button on:click={() => removePlayer(playerID)}> Leave Game </button>
     </div>
   {/if}
-  <input type=number bind:value={gameLength} min=0 max=10>
+  <input type="number" bind:value={gameLength} min="0" max="10" />
   <button on:click={startGame}> Start Game </button>
   <button on:click={toggle}> Config </button>
 </main>
