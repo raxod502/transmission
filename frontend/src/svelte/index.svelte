@@ -3,7 +3,6 @@
 
   import { API } from "./index/api.js";
   import { v4 as uuidv4 } from "uuid";
-  import Graph from "./Graph.svelte";
   import FixedGraph from "./FixedGraph.svelte";
   import Timer from "./Timer.svelte";
   import Lobby from "./Lobby.svelte";
@@ -17,7 +16,7 @@
       state: "loading",
     },
   };
- let selectedFacts = {};
+  let selectedFacts = {};
   let config = false;
   let playerID = getPlayerID();
   let composedMessages = {};
@@ -27,6 +26,7 @@
       console.log("Received state update:", newState);
       state = newState;
       state.players = newState.players;
+      window.state = state;
     },
   });
   api.connect();
@@ -115,11 +115,14 @@
                 and role:
                 {state.players[playerID].role}
                 {#if state.players[playerID].knownFacts}
-                    {#each Object.entries(state.players[playerID].knownFacts) as [name, _]}
-                      <div>
-                          You know that the {name} is {state.facts.real[name].value}
-                      </div>
-                    {/each}
+                  {#each Object.entries(state.players[playerID].knownFacts) as [name, _]}
+                    <div>
+                      You know that the
+                      {name}
+                      is
+                      {state.facts.real[name].value}
+                    </div>
+                  {/each}
                 {/if}
               </div>
               <div class="column">
@@ -172,7 +175,9 @@
             {#each Object.entries(state.facts.real) as [name, { possible, value }]}
               <p>
                 <label for="fact-dropdown-{name}">{name}</label>
-                <select name="fact-dropdown-{name}" bind:value={selectedFacts[name]}>
+                <select
+                  name="fact-dropdown-{name}"
+                  bind:value={selectedFacts[name]}>
                   {#each possible as value}
                     <option {value}>{value}</option>
                   {/each}
@@ -185,7 +190,12 @@
             <textarea />
           </div>
           <div class="row" style="height: 25%">
-            <Power role={state.players[playerID].role} state={state} api={api} playerID={playerID} selectedFacts={selectedFacts}/>
+            <Power
+              role={state.players[playerID].role}
+              {state}
+              {api}
+              {playerID}
+              {selectedFacts} />
             <button on:click={toggleConfig}> Config Panel </button>
             <button on:click={goToLobby}> Return To Lobby </button>
           </div>
@@ -193,7 +203,7 @@
       </div>
     </div>
   {:else if state.game.state === 'results'}
-    <Results facts={state.facts} players={state.players}/>
+    <Results facts={state.facts} players={state.players} />
     <button on:click={goToLobby}> Return To Lobby </button>
   {/if}
 </main>

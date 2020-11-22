@@ -112,24 +112,35 @@
 
 <main>
   Lobby
-  {#each Object.entries(players) as [_, { name, color }]}
+  {#each Object.values(players).sort(({ name: n1 }, { name: n2 }) =>
+    n1.localeCompare(n2)
+  ) as { name, color }}
     <div style="color: {color}">{name}</div>
   {/each}
   {#if !user.joined}
     <div>
       Name:
-      <input bind:value={user.name} placeholder="Your name" />
-      <button on:click={() => joinGame(playerID)}> Join </button>
+      <form>
+        <input bind:value={user.name} placeholder="Your name" />
+        <button type="submit" on:click={() => joinGame(playerID)}>
+          Join
+        </button>
+      </form>
     </div>
   {:else}
     <div>
-      Update Name:
-      <input bind:value={user.name} />
-      <button on:click={() => updateName(playerID)}> Submit </button>
-      <button on:click={() => removePlayer(playerID)}> Leave Game </button>
+      Update name:
+      <form>
+        <input bind:value={user.name} />
+        <button type="submit" on:click={() => updateName(playerID)}>Update name</button>
+        <button type="button" on:click={() => removePlayer(playerID)}>Leave Game</button>
+      </form>
     </div>
   {/if}
-  <input type="number" bind:value={gameLength} min="0" max="10" />
-  <button on:click={startGame}> Start Game </button>
+  Game length, minutes:
+  <form>
+    <input type="number" bind:value={gameLength} min="0" max="10" />
+    <button type="submit" on:click={startGame}> Start Game </button>
+  </form>
   <button on:click={toggle}> Config </button>
 </main>
