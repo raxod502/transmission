@@ -81,6 +81,15 @@
     };
     api.socket.send(JSON.stringify(message));
   }
+  function getInterlocutorName(playerID, groupID) {
+    const curNodeID = state.players[playerID].node;
+    for (const [id, { groups }] of Object.entries(state.graph.nodes)) {
+      if (id !== curNodeID && groups.includes(groupID)) {
+        return state.graph.nodes[id].name;
+      }
+    }
+    return "Unknown Interlocutor";
+  }
 </script>
 
 <main>
@@ -110,8 +119,8 @@
           <div class="row" style="height: 20%">
             <div class="columns is-gapless">
               <div class="column">
-                  <p>Name: {state.players[playerID].name}</p>
-                  <p>Role: {state.players[playerID].role}</p>
+                <p>Name: {state.players[playerID].name}</p>
+                <p>Role: {state.players[playerID].role}</p>
                 {#if state.players[playerID].knownFacts}
                   {#each Object.entries(state.players[playerID].knownFacts) as [name, _]}
                     <div>
@@ -124,7 +133,7 @@
                 {/if}
               </div>
               <div class="column">
-                  <p class="has-text-weight-bold">Timer: </p>
+                <p class="has-text-weight-bold">Timer:</p>
                 <Timer
                   startTime={state.game.startTime}
                   endTime={state.game.stopTime}
@@ -133,25 +142,37 @@
             </div>
           </div>
           <div class="row" style="height: 80%">
-            <div class="columns is-gapless">
+            <div class="columns is-gapless mx-2" style="height: 100%">
               {#if Object.keys(state.graph.groups).length === 0}
                 <p>No conversations</p>
               {:else}
                 {#each state.graph.nodes[state.players[playerID].node].groups as groupID}
                   {#if state.graph.groups[groupID]}
-                    <div class="column">
-                      <div class="rows">
-                        <div class="row">
-                          {#each state.graph.groups[groupID].messages.slice(-20) as { sender, text }}
-                            <p style="color: {state.graph.nodes[sender].color}">
-                              {state.graph.nodes[sender].name}:
-                              {text}
-                            </p>
-                          {/each}
-                          <input
-                            type="text"
-                            on:keyup|preventDefault={() => checkForSend(groupID)}
-                            bind:value={composedMessages[groupID]} />
+                    <div class="column" style="height: 100%">
+                      <div class="rows" style="height: 100%; display: flex">
+                        <div class="row mx-3" style="width: 100%; height: 100%">
+                          <div
+                            style="overflow-y: auto; height: calc(100% - 60px); display: flex">
+                            <div style="margin-top: auto">
+                              {#each state.graph.groups[groupID].messages.slice(-20) as { sender, text }}
+                                <p
+                                  style="color: {state.graph.nodes[sender].color}"
+                                  class="mb-3">
+                                  {state.graph.nodes[sender].name}:
+                                  {text}
+                                </p>
+                              {/each}
+                            </div>
+                          </div>
+                          <div style="height: 60px">
+                            <input
+                              type="text"
+                              class="input"
+                              on:keyup|preventDefault={() => checkForSend(groupID)}
+                              bind:value={composedMessages[groupID]}
+                              style="width: 100%"
+                              placeholder="Message to {getInterlocutorName(playerID, groupID)}" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -194,15 +215,21 @@
               {api}
               {playerID}
               {selectedFacts} />
-            <p class="has-text-weight-bold"> Admin: </p>
-            <button class="button is-danger" on:click={toggleConfig}> Config Panel </button>
-            <button class="button is-link" on:click={goToLobby}> Return To Lobby </button>
+            <p class="has-text-weight-bold">Admin:</p>
+            <button class="button is-danger" on:click={toggleConfig}>
+              Config Panel
+            </button>
+            <button class="button is-link" on:click={goToLobby}>
+              Return To Lobby
+            </button>
           </div>
         </div>
       </div>
     </div>
   {:else if state.game.state === 'results'}
     <Results facts={state.facts} players={state.players} />
-    <button class="button is-link" on:click={goToLobby}> Return To Lobby </button>
+    <button class="button is-link" on:click={goToLobby}>
+      Return To Lobby
+    </button>
   {/if}
 </main>
