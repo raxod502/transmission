@@ -31,7 +31,7 @@
 </script>
 <main>
     {#if uses > 0}
-        <button on:click={()=>addKnownRole(role)}>Reveal {role}</button>
+        <button class="button is-primary" on:click={()=>addKnownRole(role)}>Reveal {role}</button>
     {:else}
         {#if players[playerID].knownRoles}
             {#each Object.entries(players[playerID].knownRoles) as [nodeID, role]}

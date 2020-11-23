@@ -110,10 +110,8 @@
           <div class="row" style="height: 20%">
             <div class="columns is-gapless">
               <div class="column">
-                Name:
-                {state.players[playerID].name}
-                and role:
-                {state.players[playerID].role}
+                  <p>Name: {state.players[playerID].name}</p>
+                  <p>Role: {state.players[playerID].role}</p>
                 {#if state.players[playerID].knownFacts}
                   {#each Object.entries(state.players[playerID].knownFacts) as [name, _]}
                     <div>
@@ -126,7 +124,7 @@
                 {/if}
               </div>
               <div class="column">
-                Timer:
+                  <p class="has-text-weight-bold">Timer: </p>
                 <Timer
                   startTime={state.game.startTime}
                   endTime={state.game.stopTime}
@@ -167,11 +165,11 @@
       <div class="column">
         <div class="rows" style="height: 100vh">
           <div class="row" style="height: 25%">
-            <p>Network</p>
+            <p class="has-text-weight-bold">Network</p>
             <FixedGraph stateGraph={state.graph} />
           </div>
           <div class="row" style="height: 25%">
-            <p>Facts</p>
+            <p class="has-text-weight-bold">Facts</p>
             {#each Object.entries(state.facts.real) as [name, { possible, value }]}
               <p>
                 <label for="fact-dropdown-{name}">{name}</label>
@@ -186,7 +184,7 @@
             {/each}
           </div>
           <div class="row" style="height: 25%">
-            <p>Notes</p>
+            <p class="has-text-weight-bold">Notes</p>
             <textarea />
           </div>
           <div class="row" style="height: 25%">
@@ -196,14 +194,15 @@
               {api}
               {playerID}
               {selectedFacts} />
-            <button on:click={toggleConfig}> Config Panel </button>
-            <button on:click={goToLobby}> Return To Lobby </button>
+            <p class="has-text-weight-bold"> Admin: </p>
+            <button class="button is-danger" on:click={toggleConfig}> Config Panel </button>
+            <button class="button is-link" on:click={goToLobby}> Return To Lobby </button>
           </div>
         </div>
       </div>
     </div>
   {:else if state.game.state === 'results'}
     <Results facts={state.facts} players={state.players} />
-    <button on:click={goToLobby}> Return To Lobby </button>
+    <button class="button is-link" on:click={goToLobby}> Return To Lobby </button>
   {/if}
 </main>

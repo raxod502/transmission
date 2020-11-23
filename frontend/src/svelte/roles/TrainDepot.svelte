@@ -11,6 +11,7 @@
  }
 </script>
 <main>
-    <button on:click={guessFacts}> guess the facts </button>
+    <button class="button is-danger" on:click={guessFacts}> guess the facts </button>
+    <br/>
     CLICKING THIS BUTTON WILL END THE GAME!
 </main>

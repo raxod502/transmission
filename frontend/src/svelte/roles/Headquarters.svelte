@@ -16,5 +16,5 @@
  }
 </script>
 <main>
-    <button on:click={revealFacts}>Reveal Facts</button>
+    <button class = "button is-primary" on:click={revealFacts}>Reveal Facts</button>
 </main>

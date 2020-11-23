@@ -41,7 +41,10 @@
             </select>
         {/if}
     </div>
-    <button on:click={submitCheck} disabled={uses <= 0}> Check Fact </button>
+    <button
+        on:click={submitCheck}
+        disabled={uses <= 0}
+        class="button is-primary"> Check Fact </button>
     {:else}
             Results:
             {#each checks as {name, guessedValue, correct}}
