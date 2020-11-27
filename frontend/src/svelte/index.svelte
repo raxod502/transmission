@@ -59,7 +59,7 @@
     let message = {
       event: "startPregame",
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function checkForSend(groupID) {
     if (event.code == "Enter" && composedMessages[groupID] !== "") {
@@ -79,7 +79,7 @@
       sender: sender,
       text: text,
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function getInterlocutorName(playerID, groupID) {
     const curNodeID = state.players[playerID].node;

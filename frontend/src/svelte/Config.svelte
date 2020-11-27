@@ -14,22 +14,24 @@
 
   function updatePlayer(id) {
     let player = players[id];
-    console.log(player);
+    console.log("update player:", player);
     let playerMessage = {
       event: "updatePlayer",
       player: player,
     };
-    let nodeMessage = {
-      event: "updateNode",
-      node: {
-        ...graph.nodes[player.node],
-        player: player.id,
-        name: player.name,
-        color: player.color,
-      },
-    };
     api.socket.send(JSON.stringify(playerMessage));
-    api.socket.send(JSON.stringify(nodeMessage));
+    if (player.node) {
+      let nodeMessage = {
+        event: "updateNode",
+        node: {
+          ...graph.nodes[player.node],
+          player: player.id,
+          name: player.name,
+          color: player.color,
+        },
+      };
+      api.socket.send(JSON.stringify(nodeMessage));
+    }
   }
   function addNode() {
     let message = {
@@ -39,14 +41,14 @@
         groups: [],
       },
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function removeNode(id) {
     let message = {
       event: "removeNode",
       nodeID: id,
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function addGroup() {
     let message = {
@@ -56,14 +58,14 @@
         messages: [],
       },
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function removeGroup(id) {
     let message = {
       event: "removeGroup",
       groupID: id,
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   let groupsToAdd = {};
   function associateGroup(nodeID) {
@@ -76,13 +78,10 @@
         groups: [...node.groups, groupID],
       },
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function disassociateGroup(node, groupID) {
-    console.log(groupID);
-    console.log(node.groups);
     let newGroups = node.groups.filter((g) => g !== groupID);
-    console.log(node.groups);
     let message = {
       event: "updateNode",
       node: {
@@ -90,7 +89,7 @@
         groups: newGroups,
       },
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function selectActiveFacts() {
     let facts = {};
@@ -106,7 +105,7 @@
       event: "setRealFacts",
       facts: facts,
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function addKnownFact(id, factName) {
     let message = {
@@ -114,7 +113,7 @@
       playerID: id,
       names: [factName],
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
 </script>
 
@@ -122,21 +121,25 @@
   <p>Config</p>
   <p>Players:</p>
   {#each Object.entries(players) as [id, player]}
-    <form on:submit|preventDefault={() => updatePlayer(id)}>
-      <input type="string" bind:value={player.name} />
-      <select bind:value={player.role}>
+    <form>
+      <input
+        type="string"
+        bind:value={player.name}
+        on:input={() => updatePlayer(id)} />
+      <!-- svelte-ignore a11y-no-onchange -->
+      <select bind:value={player.role} on:change={() => updatePlayer(id)}>
         <option value="">(no role)</option>
         {#each availableRoles as role}
           <option value={role}>{role}</option>
         {/each}
       </select>
-      <select bind:value={player.node}>
+      <!-- svelte-ignore a11y-no-onchange -->
+      <select bind:value={player.node} on:change={() => updatePlayer(id)}>
         <option value="">(no node)</option>
         {#each Object.entries(graph.nodes) as [nodeID, _]}
           <option value={nodeID}>{nodeID}</option>
         {/each}
       </select>
-      <button style="submit"> Update </button>
     </form>
     <select bind:value={knownFacts[id]}>
       <option value="">(no fact)</option>
@@ -180,7 +183,7 @@
   {/each}
   <button on:click={addNode}> addNode </button>
   <p>Groups</p>
-  {#each Object.entries(graph.groups) as [groupID, group]}
+  {#each Object.keys(graph.groups) as groupID}
     <div>
       {groupID}
       <button on:click={() => removeGroup(groupID)}> Remove </button>
@@ -191,25 +194,30 @@
     <p>Current Facts</p>
     {#each Object.entries(facts.real) as [name, fact]}
       <div>
-        {name}: value:
-        <select bind:value={fact.value}>
+        {name}:
+
+        <!-- svelte-ignore a11y-no-onchange -->
+        <select
+          bind:value={fact.value}
+          on:change={() => setRealFacts(facts.real)}>
           {#each fact.possible as possible}
             <option value={possible}>{possible}</option>
           {/each}
         </select>
       </div>
     {/each}
-    <button on:click={() => setRealFacts(facts.real)}> Update Values </button>
   {/if}
   Available Facts:
-  {#each Object.entries(possibleFacts) as [name, fact]}
+  {#each Object.keys(possibleFacts) as name}
     <div>
       <label>
-        <input type="checkbox" bind:checked={factsIncluded[name]} />
+        <input
+          type="checkbox"
+          bind:checked={factsIncluded[name]}
+          on:change={selectActiveFacts} />
         {name}
       </label>
     </div>
   {/each}
-  <button on:click={selectActiveFacts}>Select Facts </button>
   <button on:click={toggleConfig}>Back to game</button>
 </main>

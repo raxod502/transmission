@@ -13,7 +13,7 @@
          field: selectedFact,
          value: selectedValue
      };
-     api.socket.send(JSON.stringify(message));
+     api.send(message);
      uses--;
  }
 </script>

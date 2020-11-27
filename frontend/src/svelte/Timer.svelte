@@ -26,7 +26,7 @@
     let message = {
       event: "stopGame",
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
 </script>
 

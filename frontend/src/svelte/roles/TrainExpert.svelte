@@ -26,7 +26,7 @@
          nodeID: nodeID,
          role: role
      };
-     api.socket.send(JSON.stringify(message));
+     api.send(message);
  }
 </script>
 <main>

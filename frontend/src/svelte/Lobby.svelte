@@ -55,7 +55,7 @@
         groups: [],
       },
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function updateName(id) {
     let player = players[id];
@@ -66,7 +66,7 @@
         name: user.name,
       },
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
   function getColor(playerID) {
     if (players && players[playerID] && players[playerID].color) {
@@ -81,7 +81,7 @@
       event: "startGame",
       stopTime: new Date(currentTime.getTime() + gameLengthMin * 60000),
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
 
   function randomColor() {
@@ -105,7 +105,7 @@
       event: "removePlayer",
       playerID: id,
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
     user.joined = false;
   }
 </script>

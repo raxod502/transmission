@@ -31,4 +31,7 @@ export class API {
       this.onStateUpdate(message);
     });
   }
+  send(message) {
+    this.socket.send(JSON.stringify(message));
+  }
 }

@@ -9,7 +9,7 @@
       event: "submitFacts",
       submission: submission,
     };
-    api.socket.send(JSON.stringify(message));
+    api.send(message);
   }
 </script>
 

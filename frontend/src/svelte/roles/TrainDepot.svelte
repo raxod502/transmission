@@ -7,7 +7,7 @@
          event: "submitFacts",
          submission: selectedFacts
      };
-     api.socket.send(JSON.stringify(message));
+     api.send(message);
  }
 </script>
 <main>

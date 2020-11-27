@@ -26,10 +26,18 @@ export default {
         css.write("index.css", !production);
       },
       preprocess: sveltePreprocess(),
-      onwarn: (warning, handler) => {
-        if (warning.code === "a11y-autofocus") return;
-        handler(warning);
-      },
+      // This doesn't work for the language server, so we have to use
+      // line comments disabling warnings. Commenting out here for
+      // consistency. See https://github.com/sveltejs/language-tools/issues/650
+
+      // onwarn: (warning, handler) => {
+      //   switch (warning.code) {
+      //     case "a11y-autofocus":
+      //     case "a11y-no-onchange":
+      //       return;
+      //   }
+      //   handler(warning);
+      // },
     }),
     postcss(),
     nodePolyfills(),

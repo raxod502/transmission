@@ -16,12 +16,9 @@
     for (const [nodeID, { groups: groupIDs }] of Object.entries(
       stateGraph.nodes
     )) {
-      // console.log("add node", nodeID);
-      // console.log(s.graph.nodes());
       var x;
       var y;
       if (nodeID.length < 10) {
-        console.log(nodeID);
         let num = parseInt(nodeID.slice(5), 10);
         x = Math.cos((num / 6) * 2 * Math.PI);
         y = Math.sin((num / 6) * 2 * Math.PI);
@@ -51,14 +48,9 @@
     }
     for (const [groupID, groupNodeIDs] of edges.entries()) {
       if (groupNodeIDs.size !== 2) {
-        // console.log(
-        //   `Graph rendering: skipping hyper-edge of size ${groupNodeIDs.size}:`,
-        //   groupID
-        // );
         continue;
       }
       const [source, target] = Array.from(groupNodeIDs);
-      // console.log("add edge", groupID, `[${source} -> ${target}]`);
       s.graph.addEdge({
         id: groupID,
         source,
@@ -72,9 +64,11 @@
   $: updateGraph(sigmaGraph, stateGraph);
 
   onMount(() => {
-    // console.log("container:", container);
     sigmaGraph = new sigma({
       container,
+      settings: {
+        mouseEnabled: false,
+      },
     });
     window.sigma = sigmaGraph;
   });
