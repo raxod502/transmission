@@ -150,7 +150,7 @@
     <button on:click={() => addKnownFact(id, knownFacts[id])}>Update Known Fact
     </button>
   {/each}
-  <Graph stateGraph={graph} />
+  <Graph stateGraph={graph} {api} />
   <p>Nodes</p>
   {#each Object.entries(graph.nodes) as [nodeID, node]}
     <div style="border: 1px solid black; margin: 2px">

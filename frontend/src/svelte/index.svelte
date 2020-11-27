@@ -187,7 +187,7 @@
         <div class="rows" style="height: 100vh">
           <div class="row" style="height: 25%">
             <p class="has-text-weight-bold">Network</p>
-            <FixedGraph stateGraph={state.graph} />
+            <FixedGraph stateGraph={state.graph} {api} />
           </div>
           <div class="row" style="height: 25%">
             <p class="has-text-weight-bold">Facts</p>

@@ -1,11 +1,15 @@
 <script>
   export let stateGraph;
+  export let api;
 
   import sigma from "sigma";
   import { onMount } from "svelte";
+  import { v4 as uuidv4 } from "uuid";
 
   let container;
   let sigmaGraph;
+
+  let selectedNodeID = null;
 
   function updateGraph(s, stateGraph) {
     if (s === undefined) return;
@@ -22,7 +26,7 @@
         label: stateGraph.nodes[nodeID].name,
         x: x,
         y: y,
-        size: 1,
+        size: nodeID === selectedNodeID ? 1 : 2,
         color: stateGraph.nodes[nodeID].color,
       });
       for (const groupID of groupIDs) {
@@ -52,15 +56,47 @@
     s.refresh();
   }
 
+  function clickNode(clickedNodeID) {
+    console.log("selected:", selectedNodeID, "clicked:", clickedNodeID);
+    if (selectedNodeID === null) {
+      selectedNodeID = clickedNodeID;
+      sigmaGraph = sigmaGraph;
+      return;
+    }
+    if (clickedNodeID !== selectedNodeID) {
+      const groupID = "group-" + uuidv4();
+      api.send({
+        event: "updateGroup",
+        group: {
+          id: groupID,
+          messages: [],
+        },
+      });
+      for (const nodeID of [clickedNodeID, selectedNodeID]) {
+        const node = stateGraph.nodes[nodeID];
+        api.send({
+          event: "updateNode",
+          node: {
+            ...node,
+            groups: [...node.groups, groupID],
+          },
+        });
+      }
+    }
+    selectedNodeID = null;
+    sigmaGraph = sigmaGraph;
+  }
+
   $: updateGraph(sigmaGraph, stateGraph);
 
   onMount(() => {
     sigmaGraph = new sigma({
       container,
       settings: {
-        mouseEnabled: false,
+        // mouseEnabled: false,
       },
     });
+    sigmaGraph.bind("clickNode", ({ data: { node: { id } } }) => clickNode(id));
     window.sigma = sigmaGraph;
   });
 </script>
