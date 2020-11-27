@@ -157,7 +157,7 @@
       <b>{nodeID}</b>
       <button on:click={() => removeNode(nodeID)}> Remove </button>
       <div>
-        {#if node.groups}
+        {#if Object.keys(node.groups).length > 0}
           Associated Groups:
           <ul>
             {#each node.groups as groupID}
@@ -170,14 +170,16 @@
             {/each}
           </ul>
         {/if}
-        <form on:submit|preventDefault={() => associateGroup(nodeID)}>
-          <select bind:value={groupsToAdd[nodeID]}>
-            {#each Object.entries(graph.groups) as [groupID, _]}
-              <option value={groupID}>{groupID}</option>
-            {/each}
-          </select>
-          <button style="submit">Associate</button>
-        </form>
+        {#if Object.keys(graph.groups).length > 0}
+          <form on:submit|preventDefault={() => associateGroup(nodeID)}>
+            <select bind:value={groupsToAdd[nodeID]}>
+              {#each Object.entries(graph.groups) as [groupID, _]}
+                <option value={groupID}>{groupID}</option>
+              {/each}
+            </select>
+            <button style="submit">Associate</button>
+          </form>
+        {/if}
       </div>
     </div>
   {/each}
