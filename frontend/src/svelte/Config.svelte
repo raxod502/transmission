@@ -108,13 +108,13 @@
     };
     api.socket.send(JSON.stringify(message));
   }
-  function addKnownFact(id, factName){
-      let message = {
-          event: "addKnownFact",
-          playerID: id,
-          names: [factName]
-      };
-      api.socket.send(JSON.stringify(message));
+  function addKnownFact(id, factName) {
+    let message = {
+      event: "addKnownFact",
+      playerID: id,
+      names: [factName],
+    };
+    api.socket.send(JSON.stringify(message));
   }
 </script>
 
@@ -125,11 +125,13 @@
     <form on:submit|preventDefault={() => updatePlayer(id)}>
       <input type="string" bind:value={player.name} />
       <select bind:value={player.role}>
+        <option value="">(no role)</option>
         {#each availableRoles as role}
           <option value={role}>{role}</option>
         {/each}
       </select>
       <select bind:value={player.node}>
+        <option value="">(no node)</option>
         {#each Object.entries(graph.nodes) as [nodeID, _]}
           <option value={nodeID}>{nodeID}</option>
         {/each}
@@ -137,11 +139,13 @@
       <button style="submit"> Update </button>
     </form>
     <select bind:value={knownFacts[id]}>
-        {#each Object.entries(facts.real) as [name, _]}
-            <option value={name}>{name}</option>
-        {/each}
+      <option value="">(no fact)</option>
+      {#each Object.entries(facts.real) as [name, _]}
+        <option value={name}>{name}</option>
+      {/each}
     </select>
-    <button on:click={()=>addKnownFact(id, knownFacts[id])}>Update Known Fact </button>
+    <button on:click={() => addKnownFact(id, knownFacts[id])}>Update Known Fact
+    </button>
   {/each}
   <Graph stateGraph={graph} />
   <p>Nodes</p>
