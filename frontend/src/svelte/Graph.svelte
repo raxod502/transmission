@@ -13,19 +13,10 @@
       s.graph.dropNode(node.id);
     }
     const edges = new Map();
-    for (const [nodeID, { groups: groupIDs }] of Object.entries(
-      stateGraph.nodes
-    )) {
-      var x;
-      var y;
-      if (nodeID.length < 10) {
-        let num = parseInt(nodeID.slice(5), 10);
-        x = Math.cos((num / 6) * 2 * Math.PI);
-        y = Math.sin((num / 6) * 2 * Math.PI);
-      } else {
-        x = Math.random();
-        y = Math.random();
-      }
+    const entries = Object.entries(stateGraph.nodes);
+    for (const [idx, [nodeID, { groups: groupIDs }]] of entries.entries()) {
+      const x = Math.cos((idx / entries.length) * 2 * Math.PI);
+      const y = Math.sin((idx / entries.length) * 2 * Math.PI);
       s.graph.addNode({
         id: nodeID,
         label: stateGraph.nodes[nodeID].name,
