@@ -93,7 +93,8 @@
     sigmaGraph = new sigma({
       container,
       settings: {
-        // mouseEnabled: false,
+        // https://github.com/jacomyal/sigma.js/issues/405#issuecomment-57633863
+        zoomingRatio: 1,
       },
     });
     sigmaGraph.bind("clickNode", ({ data: { node: { id } } }) => clickNode(id));
