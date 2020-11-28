@@ -161,25 +161,25 @@
           </p>
         </form>
       </div>
+      <div class="my-5">
+        Start game:
+        <form class="field is-grouped">
+          <p class="control">
+            <input
+              class="input"
+              type="number"
+              bind:value={gameLength}
+              min="0"
+              max="480" />
+          </p>
+          <p class="control">
+            <button type="submit" class="button is-success" on:click={startGame}>
+              Start Game
+            </button>
+          </p>
+        </form>
+      </div>
     {/if}
-    <div class="my-5">
-      Start game:
-      <form class="field is-grouped">
-        <p class="control">
-          <input
-            class="input"
-            type="number"
-            bind:value={gameLength}
-            min="0"
-            max="480" />
-        </p>
-        <p class="control">
-          <button type="submit" class="button is-success" on:click={startGame}>
-            Start Game
-          </button>
-        </p>
-      </form>
-    </div>
     <button on:click={toggle} class="my-5 is-pulled-right button is-light">
       Admin panel
     </button>
