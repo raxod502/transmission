@@ -3,9 +3,10 @@
  export let playerID;
  export let api;
  export let checks;
+ export let powerUses;
  let selectedFact;
  let selectedValue;
- let uses = 1;
+ const uses = 1;
  function submitCheck(){
      let message = {
          event: "checkFact",
@@ -18,7 +19,7 @@
  }
 </script>
 <main>
-    {#if uses > 0}
+    {#if uses > powerUses}
     <div>
         Fact:
         <select bind:value={selectedFact}>
@@ -43,7 +44,6 @@
     </div>
     <button
         on:click={submitCheck}
-        disabled={uses <= 0}
         class="button is-primary"> Check Fact </button>
     {:else}
             Results:

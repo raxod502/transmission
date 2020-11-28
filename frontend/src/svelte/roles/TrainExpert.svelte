@@ -1,36 +1,37 @@
 <script>
  export let playerID;
  export let players;
+ export let powerUses;
  export let nodes;
  export let api;
  export let role = "Train Depot";
- let uses = 1;
+ const uses = 1;
  console.log(uses)
  console.log(players[playerID].knownRoles)
  function addKnownRole(role){
-     var nodeID;
+     let nodeIDs = [];
      for (const [_, player] of Object.entries(players)){
          if (player.role === role && player.id != playerID){
-             nodeID = player.node;
+             nodeIDs.push(player.node);
          }
      }
-     if (!nodeID){
+     if (nodeIDs.length == 0){
          console.log("could not find a player with role ", role)
          return;
      }
-     uses--;
-     console.log(uses)
-     let message = {
-         event: "addKnownRole",
-         playerID: playerID,
-         nodeID: nodeID,
-         role: role
-     };
-     api.send(message);
+     for (const nodeID of nodeIDs){
+        let message = {
+            event: "addKnownRole",
+            playerID: playerID,
+            nodeID: nodeID,
+            role: role
+        };
+        api.send(message);
+     }
  }
 </script>
 <main>
-    {#if uses > 0}
+    {#if uses > powerUses}
         <button class="button is-primary" on:click={()=>addKnownRole(role)}>Reveal {role}</button>
     {:else}
         {#if players[playerID].knownRoles}

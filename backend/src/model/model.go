@@ -225,6 +225,7 @@ type Player struct {
 	Checks     []Check         `json:"checks"`
 	KnownRoles map[NodeID]Role `json:"knownRoles"`
 	KnownFacts map[string]bool `json:"knownFacts"`
+	PowerUses  int             `json:"powerUses"`
 }
 
 type Check struct {
@@ -313,6 +314,7 @@ func (s *State) CheckFact(check *CheckFact) error {
 		return fmt.Errorf("no fact with name %v", check.Field)
 	}
 	guessingPlayer.Checks = append(guessingPlayer.Checks, Check{Name: check.Field, GuessedValue: check.Value, Correct: check.Value == fact.Value})
+	guessingPlayer.PowerUses++
 	return nil
 }
 
@@ -450,6 +452,7 @@ func (s *State) AddKnownRole(message *AddKnownRole) error {
 		player.KnownRoles = map[NodeID]Role{}
 	}
 	player.KnownRoles[message.NodeID] = message.Role
+	player.PowerUses++
 	return nil
 }
 

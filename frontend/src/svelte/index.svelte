@@ -211,6 +211,7 @@
           <div class="row" style="height: 25%">
             <Power
               role={state.players[playerID].role}
+              powerUses={state.players[playerID].powerUses}
               {state}
               {api}
               {playerID}
