@@ -373,6 +373,38 @@ func (s *State) StartGame(stopTime *time.Time) error {
 		}
 		fact.Value = fact.Possible[rand.Intn(len(fact.Possible))]
 	}
+	unassignedPlayers := []*Player{}
+	for _, player := range s.Players {
+		if player.Node == "" {
+			unassignedPlayers = append(unassignedPlayers, player)
+		}
+	}
+	if len(unassignedPlayers) != 0 {
+		err := s.autoAssignPlayersToNodes(unassignedPlayers)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *State) autoAssignPlayersToNodes(unassignedPlayers []*Player) error {
+	emptyNodes := []*Node{}
+	for _, node := range s.Graph.Nodes {
+		if node.Player == "" {
+			emptyNodes = append(emptyNodes, node)
+		}
+	}
+	if len(emptyNodes) != len(unassignedPlayers) {
+		return fmt.Errorf("%v empty nodes but %v unassigned players", len(emptyNodes), len(unassignedPlayers))
+	}
+	rand.Shuffle(len(emptyNodes), func(i int, j int) { emptyNodes[i], emptyNodes[j] = emptyNodes[j], emptyNodes[i] })
+	for i, player := range unassignedPlayers {
+		player.Node = emptyNodes[i].ID
+		emptyNodes[i].Player = player.ID
+		emptyNodes[i].Color = player.Color
+		emptyNodes[i].Name = player.Name
+	}
 	return nil
 }
 
