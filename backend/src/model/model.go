@@ -278,6 +278,33 @@ type UpdatePlayer struct {
 	Player Player `json:"player"`
 }
 
+func (s *State) ResetGame() {
+	// Delete messages from current game
+	for _, group := range s.Graph.Groups {
+		group.Messages = []Message{}
+	}
+	// Keep only id, name, and color for player
+	for id, player := range s.Players {
+		s.Players[id] = &Player{
+			Name:  player.Name,
+			Color: player.Color,
+			ID:    player.ID,
+			Node:  "",
+		}
+	}
+	// Reset facts
+	s.Facts.Real = map[string]*Fact{}
+	s.Facts.Submitted = map[string]string{}
+	// Clear node assignments but keep map structure
+	for id, node := range s.Graph.Nodes {
+		s.Graph.Nodes[id] = &Node{
+			ID:     node.ID,
+			Groups: node.Groups,
+		}
+	}
+
+}
+
 func (s *State) UpdatePlayer(newPlayer Player) {
 	s.Players[newPlayer.ID] = &newPlayer
 }
@@ -320,7 +347,7 @@ func (s *State) CheckFact(check *CheckFact) error {
 
 func (s *State) StartPregame() {
 	s.Game.State = LOBBY
-	// TODO Do we need or want this to do other state cleanup?
+	s.ResetGame()
 }
 
 type StartGame struct {
@@ -352,10 +379,6 @@ type SubmitFacts struct {
 }
 
 func (s *State) SubmitFacts(submission map[string]string) {
-	// Delete messages from current game
-	for _, group := range s.Graph.Groups {
-		group.Messages = []Message{}
-	}
 	s.Facts.Submitted = submission
 	s.Game.State = RESULTS
 }

@@ -52,7 +52,6 @@
         id: id,
         color: getColor(id),
         node: null,
-        groups: [],
       },
     };
     api.send(message);
