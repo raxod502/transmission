@@ -273,11 +273,6 @@ type EventName struct {
 	Event string `json:"event"`
 }
 
-type UpdatePlayer struct {
-	EventName
-	Player Player `json:"player"`
-}
-
 func (s *State) ResetGame() {
 	// Delete messages from current game
 	for _, group := range s.Graph.Groups {
@@ -303,6 +298,11 @@ func (s *State) ResetGame() {
 		}
 	}
 
+}
+
+type UpdatePlayer struct {
+	EventName
+	Player Player `json:"player"`
 }
 
 func (s *State) UpdatePlayer(newPlayer Player) {
