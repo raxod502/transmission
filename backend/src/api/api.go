@@ -53,8 +53,7 @@ func HandleEvent(payload []byte, state *model.State) error {
 			if err != nil {
 				return err
 			}
-			state.StartGame(message.StopTime)
-			return nil
+			return state.StartGame(message.StopTime)
 		},
 		"submitFacts": func(payload []byte) error {
 			message := &model.SubmitFacts{}
