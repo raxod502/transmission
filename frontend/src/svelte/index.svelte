@@ -145,6 +145,8 @@
             <div class="columns is-gapless mx-2" style="height: 100%">
               {#if Object.keys(state.graph.groups).length === 0}
                 <p>No conversations</p>
+              {:else if state.players[playerID].node === ""}
+                <p>You weren't assigned to a node :(</p>
               {:else}
                 {#each state.graph.nodes[state.players[playerID].node].groups as groupID}
                   {#if state.graph.groups[groupID]}
