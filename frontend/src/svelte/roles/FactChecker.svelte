@@ -15,7 +15,6 @@
          value: selectedValue
      };
      api.send(message);
-     uses--;
  }
 </script>
 <main>
