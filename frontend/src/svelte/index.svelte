@@ -105,7 +105,7 @@
   {:else if state.game.state === 'loading'}
     Loading...
   {:else if state.game.state === 'lobby'}
-    <Lobby players={state.players} {api} {playerID} toggle={toggleConfig} />
+    <Lobby players={state.players} {api} {playerID} toggle={toggleConfig} numPlayers={Object.keys(state.graph.nodes).length}/>
   {:else if state.game.state === 'submission'}
     <Submission
       player={state.players[playerID]}

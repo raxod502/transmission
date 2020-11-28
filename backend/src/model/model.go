@@ -356,6 +356,9 @@ type StartGame struct {
 }
 
 func (s *State) StartGame(stopTime *time.Time) error {
+	if len(s.Players) != len(s.Graph.Nodes) {
+		return fmt.Errorf("cannot start a game on a map with %v nodes but only %v player(s)", len(s.Graph.Nodes), len(s.Players))
+	}
 	rand.Seed(time.Now().Unix())
 	s.Game.State = PLAYING
 	currentTime := time.Now()

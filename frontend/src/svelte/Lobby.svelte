@@ -3,6 +3,7 @@
   export let api;
   export let playerID;
   export let toggle;
+  export let numPlayers;
   let gameLength = 10;
   let user = getUser(); // TODO: how to recompute when players changes
 
@@ -173,7 +174,7 @@
               max="480" />
           </p>
           <p class="control">
-            <button type="submit" class="button is-success" on:click={startGame}>
+            <button type="submit" class="button is-success" on:click={startGame} disabled={Object.keys(players).length !== numPlayers}>
               Start Game
             </button>
           </p>
