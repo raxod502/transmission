@@ -1,7 +1,6 @@
 package model
 
 import (
-	"errors"
 	"fmt"
 	"math/rand"
 	"strconv"
@@ -124,7 +123,7 @@ func NewState() *State {
 			TRAINEXPERT:  1,
 			FACTCHECKER:  2,
 		},
-		PossibleFacts: map[string]Fact{
+		PossibleFacts: map[string]*Fact{
 			"compartment": {
 				Possible: possibleCompartments,
 				Value:    "42",
@@ -206,7 +205,7 @@ type State struct {
 	Graph         Graph                `json:"graph"`
 	Facts         Facts                `json:"facts"`
 	PossibleRoles map[Role]int         `json:"possibleRoles"`
-	PossibleFacts map[string]Fact      `json:"possibleFacts"`
+	PossibleFacts map[string]*Fact     `json:"possibleFacts"`
 }
 
 type Game struct {
@@ -359,20 +358,24 @@ func (s *State) StartGame(stopTime *time.Time) error {
 	if len(s.Players) != len(s.Graph.Nodes) {
 		return fmt.Errorf("cannot start a game on a map with %v nodes but only %v player(s)", len(s.Graph.Nodes), len(s.Players))
 	}
+	// set start and stop time
 	rand.Seed(time.Now().Unix())
 	s.Game.State = PLAYING
 	currentTime := time.Now()
 	s.Game.StartTime = &currentTime
 	s.Game.StopTime = stopTime
+	// Default to using all facts
 	if len(s.Facts.Real) == 0 {
-		return errors.New("Cannot start a game with no real facts")
+		s.Facts.Real = s.PossibleFacts
 	}
+	// Randomly select fact values
 	for name, fact := range s.Facts.Real {
 		if len(fact.Possible) == 0 {
 			return fmt.Errorf("fact %v has no possible values", name)
 		}
 		fact.Value = fact.Possible[rand.Intn(len(fact.Possible))]
 	}
+	// Assign roles and nodes to any players who don't already have them
 	unassignedPlayers := []*Player{}
 	playersWithoutRoles := []*Player{}
 	usedRoles := map[Role]int{}
