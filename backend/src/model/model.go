@@ -374,13 +374,26 @@ func (s *State) StartGame(stopTime *time.Time) error {
 		fact.Value = fact.Possible[rand.Intn(len(fact.Possible))]
 	}
 	unassignedPlayers := []*Player{}
+	playersWithoutRoles := []*Player{}
+	usedRoles := map[Role]int{}
 	for _, player := range s.Players {
 		if player.Node == "" {
 			unassignedPlayers = append(unassignedPlayers, player)
 		}
+		if player.Role == "" {
+			playersWithoutRoles = append(playersWithoutRoles, player)
+		} else {
+			usedRoles[player.Role]++
+		}
 	}
 	if len(unassignedPlayers) != 0 {
 		err := s.autoAssignPlayersToNodes(unassignedPlayers)
+		if err != nil {
+			return err
+		}
+	}
+	if len(playersWithoutRoles) != 0 {
+		err := s.autoAssignPlayersRoles(playersWithoutRoles, usedRoles)
 		if err != nil {
 			return err
 		}
@@ -404,6 +417,30 @@ func (s *State) autoAssignPlayersToNodes(unassignedPlayers []*Player) error {
 		emptyNodes[i].Player = player.ID
 		emptyNodes[i].Color = player.Color
 		emptyNodes[i].Name = player.Name
+	}
+	return nil
+}
+
+func (s *State) autoAssignPlayersRoles(playersWithoutRoles []*Player, usedRoles map[Role]int) error {
+	rolesLeft := map[Role]int{}
+	for role, possibleCount := range s.PossibleRoles {
+		rolesLeft[role] = possibleCount - usedRoles[role]
+	}
+	rolesToAssign := []Role{}
+	for role, countLeft := range rolesLeft {
+		if countLeft < 0 {
+			return fmt.Errorf("Cannot automatically assign roles because there are too many players with the role %v", role)
+		}
+		for i := 0; i < countLeft; i++ {
+			rolesToAssign = append(rolesToAssign, role)
+		}
+	}
+	if len(rolesToAssign) != len(playersWithoutRoles) {
+		return fmt.Errorf("%v players without roles, but only %v roles to assign", len(playersWithoutRoles), len(rolesToAssign))
+	}
+	rand.Shuffle(len(rolesToAssign), func(i, j int) { rolesToAssign[i], rolesToAssign[j] = rolesToAssign[j], rolesToAssign[i] })
+	for i, player := range playersWithoutRoles {
+		player.Role = rolesToAssign[i]
 	}
 	return nil
 }
