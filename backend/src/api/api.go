@@ -143,6 +143,14 @@ func HandleEvent(payload []byte, state *model.State) error {
 			}
 			return state.AddKnownFact(message)
 		},
+		"updatePossibleRoles": func(payload []byte) error {
+			message := &model.UpdatePossibleRoles{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			return state.UpdatePossibleRoles(message)
+		},
 	}
 	handler, ok := eventHandlers[event.Event]
 	if !ok {

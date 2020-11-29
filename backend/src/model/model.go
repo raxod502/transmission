@@ -570,3 +570,13 @@ func (s *State) AddKnownFact(message *AddKnownFact) error {
 	}
 	return nil
 }
+
+type UpdatePossibleRoles struct {
+	EventName
+	PossibleRoles map[Role]int
+}
+
+func (s *State) UpdatePossibleRoles(message *UpdatePossibleRoles) error {
+	s.PossibleRoles = message.PossibleRoles
+	return nil
+}

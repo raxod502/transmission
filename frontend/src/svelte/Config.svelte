@@ -115,10 +115,25 @@
     };
     api.send(message);
   }
+
+  function updateRoles(){
+      let message = {
+          event: "updatePossibleRoles",
+          possibleRoles: availableRoles,
+      };
+      api.send(message);
+  }
 </script>
 
 <main>
   <p>Config</p>
+  <p>Roles:</p>
+  {#each Object.entries(availableRoles) as [role, count]}
+      <div>
+        {role}
+        <input type="number" bind:value={availableRoles[role]} on:change={updateRoles} min=0>
+      </div>
+  {/each}
   <p>Players:</p>
   {#each Object.entries(players) as [id, player]}
     <form>
