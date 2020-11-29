@@ -117,12 +117,12 @@ func NewState() *State {
 			Real:      map[string]*Fact{},
 			Submitted: map[string]string{},
 		},
-		PossibleRoles: []Role{
-			HEADQUARTERS,
-			TRAINDEPOT,
-			DOUBLEAGENT,
-			TRAINEXPERT,
-			FACTCHECKER,
+		PossibleRoles: map[Role]int{
+			HEADQUARTERS: 0,
+			TRAINDEPOT:   1,
+			DOUBLEAGENT:  2,
+			TRAINEXPERT:  1,
+			FACTCHECKER:  2,
 		},
 		PossibleFacts: map[string]Fact{
 			"compartment": {
@@ -205,7 +205,7 @@ type State struct {
 	Players       map[PlayerID]*Player `json:"players"`
 	Graph         Graph                `json:"graph"`
 	Facts         Facts                `json:"facts"`
-	PossibleRoles []Role               `json:"possibleRoles"`
+	PossibleRoles map[Role]int         `json:"possibleRoles"`
 	PossibleFacts map[string]Fact      `json:"possibleFacts"`
 }
 

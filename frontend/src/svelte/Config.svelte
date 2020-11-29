@@ -129,7 +129,7 @@
       <!-- svelte-ignore a11y-no-onchange -->
       <select bind:value={player.role} on:change={() => updatePlayer(id)}>
         <option value="">(no role)</option>
-        {#each availableRoles as role}
+        {#each Object.entries(availableRoles) as [role, _]}
           <option value={role}>{role}</option>
         {/each}
       </select>
