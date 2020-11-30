@@ -31,6 +31,8 @@ const (
 	RESULTS    Gamestate = "results"
 )
 
+const BADDIES_GROUP GroupID = "group-baddies"
+
 func NewState() *State {
 	rand.Seed(time.Now().UnixNano())
 	possibleCompartments := []string{}
@@ -106,8 +108,8 @@ func NewState() *State {
 					ID:       "group-3-6",
 					Messages: []Message{},
 				},
-				"group-baddies": {
-					ID:       "group-baddies",
+				BADDIES_GROUP: {
+					ID:       BADDIES_GROUP,
 					Messages: []Message{},
 				},
 			},
@@ -399,6 +401,15 @@ func (s *State) StartGame(stopTime *time.Time) error {
 		err := s.autoAssignPlayersRoles(playersWithoutRoles, usedRoles)
 		if err != nil {
 			return err
+		}
+	}
+	for _, player := range s.Players {
+		if player.Role == DOUBLEAGENT {
+			playerNode, ok := s.Graph.Nodes[player.Node]
+			if !ok {
+				return fmt.Errorf("double agent not assigned a node. Player object: %v", *player)
+			}
+			playerNode.Groups = append(playerNode.Groups, BADDIES_GROUP)
 		}
 	}
 	return nil
