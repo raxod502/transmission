@@ -10,6 +10,7 @@
   import Submission from "./Submission.svelte";
   import Results from "./Results.svelte";
   import Power from "./Power.svelte";
+  import Chats from "./Chats.svelte";
 
   let state = {
     game: {
@@ -101,7 +102,8 @@
       {api}
       graph={state.graph}
       facts={state.facts}
-      possibleFacts={state.possibleFacts} />
+      possibleFacts={state.possibleFacts}
+      showSecretDetails={false}/>
   {:else if state.game.state === 'loading'}
     Loading...
   {:else if state.game.state === 'lobby'}
@@ -112,6 +114,18 @@
       {api}
       toggle={toggleConfig}
       facts={state.facts} />
+    <div class="row" style="height: 80%">
+      <div class="columns is-gapless mx-2" style="height: 100%">
+        <Chats
+          graph={state.graph}
+          players={state.players}
+          playerID={playerID}
+          getInterlocutorName={getInterlocutorName}
+          checkForSend={checkForSend}
+          composedMessages={composedMessages}
+          enabled={false}/>
+      </div>
+    </div>
   {:else if state.game.state === 'playing'}
     <div class="columns is-gapless">
       <div class="column is-three-quarters">
@@ -122,13 +136,15 @@
                 <p>Name: {state.players[playerID].name}</p>
                 <p>Role: {state.players[playerID].role}</p>
                 {#if state.players[playerID].knownFacts}
-                  {#each Object.entries(state.players[playerID].knownFacts) as [name, _]}
-                    <div>
-                      You know that the
-                      {name}
-                      is
-                      {state.facts.real[name].value}
-                    </div>
+                  {#each Object.entries(state.players[playerID].knownFacts) as [name, known]}
+                    {#if known}
+                      <div>
+                        You know that the
+                        {name}
+                        is
+                        {state.facts.real[name].value}
+                      </div>
+                    {/if}
                   {/each}
                 {/if}
               </div>
@@ -143,44 +159,13 @@
           </div>
           <div class="row" style="height: 80%">
             <div class="columns is-gapless mx-2" style="height: 100%">
-              {#if Object.keys(state.graph.groups).length === 0}
-                <p>No conversations</p>
-              {:else if state.players[playerID].node === ""}
-                <p>You weren't assigned to a node :(</p>
-              {:else}
-                {#each state.graph.nodes[state.players[playerID].node].groups as groupID}
-                  {#if state.graph.groups[groupID]}
-                    <div class="column" style="height: 100%">
-                      <div class="rows" style="height: 100%; display: flex">
-                        <div class="row mx-3" style="width: 100%; height: 100%">
-                          <div
-                            style="overflow-y: auto; height: calc(100% - 60px); display: flex">
-                            <div style="margin-top: auto">
-                              {#each state.graph.groups[groupID].messages.slice(-20) as { sender, text }}
-                                <p
-                                  style="color: {state.graph.nodes[sender].color}"
-                                  class="mb-3">
-                                  {state.graph.nodes[sender].name}:
-                                  {text}
-                                </p>
-                              {/each}
-                            </div>
-                          </div>
-                          <div style="height: 60px">
-                            <input
-                              type="text"
-                              class="input"
-                              on:keyup|preventDefault={() => checkForSend(groupID)}
-                              bind:value={composedMessages[groupID]}
-                              style="width: 100%"
-                              placeholder="Message to {getInterlocutorName(playerID, groupID)}" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  {/if}
-                {/each}
-              {/if}
+              <Chats
+                graph={state.graph}
+                players={state.players}
+                playerID={playerID}
+                getInterlocutorName={getInterlocutorName}
+                checkForSend={checkForSend}
+                composedMessages={composedMessages} />
             </div>
           </div>
         </div>

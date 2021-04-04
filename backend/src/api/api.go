@@ -135,13 +135,21 @@ func HandleEvent(payload []byte, state *model.State) error {
 			}
 			return state.AddKnownRole(message)
 		},
-		"addKnownFact": func(payload []byte) error {
-			message := &model.AddKnownFact{}
+		"setKnownFact": func(payload []byte) error {
+			message := &model.SetKnownFact{}
 			err := json.Unmarshal(payload, message)
 			if err != nil {
 				return err
 			}
-			return state.AddKnownFact(message)
+			return state.SetKnownFact(message)
+		},
+		"clearKnownFact": func(payload []byte) error {
+			message := &model.ClearKnownFact{}
+			err := json.Unmarshal(payload, message)
+			if err != nil {
+				return err
+			}
+			return state.ClearKnownFact(message)
 		},
 		"updatePossibleRoles": func(payload []byte) error {
 			message := &model.UpdatePossibleRoles{}

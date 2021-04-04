@@ -565,23 +565,35 @@ func (s *State) AddKnownRole(message *AddKnownRole) error {
 	return nil
 }
 
-type AddKnownFact struct {
+type SetKnownFact struct {
 	EventName
 	PlayerID PlayerID
 	Names    []string
 }
 
-func (s *State) AddKnownFact(message *AddKnownFact) error {
+func (s *State) SetKnownFact(message *SetKnownFact, ) error {
 	player, ok := s.Players[message.PlayerID]
 	if !ok {
 		return fmt.Errorf("player with id %v does not exist", message.PlayerID)
 	}
-	if player.KnownFacts == nil {
-		player.KnownFacts = map[string]bool{}
-	}
+	player.KnownFacts = map[string]bool{}
 	for _, name := range message.Names {
 		player.KnownFacts[name] = true
 	}
+	return nil
+}
+
+type ClearKnownFact struct {
+	EventName
+	PlayerID PlayerID
+}
+
+func (s *State) ClearKnownFact(message *ClearKnownFact, ) error {
+	player, ok := s.Players[message.PlayerID]
+	if !ok {
+		return fmt.Errorf("player with id %v does not exist", message.PlayerID)
+	}
+	player.KnownFacts = map[string]bool{}
 	return nil
 }
 
