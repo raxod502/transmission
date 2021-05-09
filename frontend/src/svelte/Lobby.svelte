@@ -16,7 +16,7 @@
     "#911eb4", // Purple
     "#f032e6", // Magenta
     "#469990", // Teal
-    "#9A6324", // Brown
+    "#9a6324", // Brown
     "#800000", // Maroon
     "#808000", // Olive
     "#000075", // Navy
