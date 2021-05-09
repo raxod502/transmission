@@ -11,7 +11,7 @@ RUN make backend-build
 FROM node:alpine AS frontend
 
 WORKDIR /src
-RUN apk add --no-cache make
+RUN apk add --no-cache git make
 COPY package.json yarn.lock ./
 RUN yarn install
 COPY Makefile rollup.config.js ./

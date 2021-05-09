@@ -9,7 +9,7 @@
 
   // https://sashamaps.net/docs/resources/20-colors/
   const distinctColors = [
-    "#e6194B", // Red
+    "#e6194b", // Red
     "#3cb44b", // Green
     "#4363d8", // Blue
     "#f58231", // Orange
@@ -174,7 +174,11 @@
               max="480" />
           </p>
           <p class="control">
-            <button type="submit" class="button is-success" on:click={startGame} disabled={Object.keys(players).length !== numPlayers}>
+            <button
+              type="submit"
+              class="button is-success"
+              on:click={startGame}
+              disabled={Object.keys(players).length !== numPlayers}>
               Start Game
             </button>
           </p>
