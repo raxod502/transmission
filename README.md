@@ -1,6 +1,6 @@
 # Transmission
 
-Social deduction game based on pairwise interaction.
+Social deduction game based on pairwise interaction. Unfinished.
 
 ## Dependencies
 
